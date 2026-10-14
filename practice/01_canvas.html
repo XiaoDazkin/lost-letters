@@ -11,11 +11,25 @@
     <script>
         const canvas = document.getElementById("game");
         const ctx = canvas.getContext("2d");
+        
+        let frame = 0;
 
-        ctx.fillStyle = "skyblue"; 
-        ctx.fillRect(0, 0, 800, 600)
-        ctx.fillStyle = "limegreen";
-        ctx.fillRect(0, 500, 800, 100)
+        function loop(){
+            frame = frame + 1
+
+            ctx.fillStyle = "skyblue"; 
+            ctx.fillRect(0, 0, 800, 600)
+            ctx.fillStyle = "limegreen";
+            ctx.fillRect(0, 500, 800, 100)
+
+            ctx.fillStyle = "black";
+            ctx.font = "3-px sans-serif";
+            ctx.fillText("frame: " + frame, 20, 40);
+
+            requestAnimationFrame(loop);
+        }
+
+        loop();
     </script>
 
 </body>
@@ -29,3 +43,11 @@ fillStyle picks the colour, and fillRect(x, y, width, height) paints a box.
 const is like a Python variable, but locked so it can’t be changed.
 (0, 0) is the top-left corner, and y goes down 🙃
  -->
+<!-- 
+ let is a variable that can change (const can’t).
+function loop() { } is Python’s def, with braces instead of indents.
+requestAnimationFrame(loop) means “run loop again before the next screen refresh.”
+loop(); at the bottom starts the first lap.
+fillText(text, x, y) writes text on the canvas.
+// starts a comment, like Python’s #. 
+-->
