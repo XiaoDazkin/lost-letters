@@ -1,0 +1,1 @@
+JS is case sensitive. Typos in names like fillStyle fail silently. Black box = color didn't stick.

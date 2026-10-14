@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="game" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = "skyblue"; 
+        ctx.fillRect(0, 0, 800, 600)
+        ctx.fillStyle = "limegreen";
+        ctx.fillRect(0, 500, 800, 100)
+    </script>
+
+</body>
+</html>
+
+<!-- 
+<canvas> is a blank drawing board, 800 wide × 600 tall.
+getElementById("game") finds that board on the page.
+ctx is your paintbrush. Every drawing command starts with ctx.
+fillStyle picks the colour, and fillRect(x, y, width, height) paints a box.
+const is like a Python variable, but locked so it can’t be changed.
+(0, 0) is the top-left corner, and y goes down 🙃
+ -->
