@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="game" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+        
+        let appleY = 0;
+        let appleX = 0;
+        let basketX = 400;
+        let score = 0;
+
+        canvas.addEventListener("mousemove", function (event) {
+            basketX = event.offsetX;
+        })
+
+        function loop() {
+            
+            ctx.fillStyle = "skyblue";
+            ctx.fillRect(0, 0, 800, 600)
+            ctx.fillStyle = "limegreen";
+            ctx.fillRect(0, 500, 800, 100)
+
+            appleY = appleY + 3;
+
+            if(appleY > 470 && appleX > basketX - 50 && appleX < basketX + 50){
+                score += 1;
+                appleY = 0;
+                appleX = 100 + Math.random() * 600;
+            }
+
+            if (appleY > 500){
+                appleY = 0;
+                appleX = 100 + Math.random() * 600;
+            }
+
+            ctx.fillStyle = "red";
+            ctx.beginPath();
+            ctx.arc(appleX, appleY, 25, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = "saddlebrown";
+            ctx.fillRect(basketX - 50, 470, 100, 30);
+
+            ctx.fillStyle = "black";
+            ctx.font = "30px sans-serif";
+            ctx.fillText("Score: " + score, 20, 40);
+            
+            requestAnimationFrame(loop);
+        }
+
+        loop();
+    </script>
+
+</body>
+</html>
+
+<!-- 
+addEventListener("mousemove", ...) means “every time the mouse moves over the canvas, run this.”
+event.offsetX is the mouse’s x position on the canvas. We save it into basketX, and the loop draws the basket there.
+basketX - 50 centres the 100px-wide basket on your mouse.
+470 puts the basket sitting right on the grass (470 + 30 tall = 500).
+ -->
