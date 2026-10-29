@@ -30,19 +30,39 @@
             const frame = ctx.getImageData(0, 0, 800, 600);
             const data = frame.data;
 
+            let sumX = 0;
+            let sumY = 0;
+            let count = 0;
+
             for(let i = 0; i < data.length; i += 4){
                 const r = data[i];
                 const g = data[i + 1];
                 const b = data[i + 2];
 
-                if(r > 180 && g < 80 && b < 80 ){
+                if(r > g + 120 && r > b + 120){
                     data[i] = 0;
                     data[i + 1] = 255;
                     data[i + 2] = 0;
+
+                    const pixel = i / 4;
+                    const x = pixel % 800;
+                    const y = Math.floor(pixel / 800);
+
+                    sumX += x;
+                    sumY += y;
+                    count += 1;
                 }
             }
             ctx.putImageData(frame, 0, 0); //repaint
 
+            if(count > 0){
+                ctx.fillStyle = "yellow";
+                ctx.beginPath();
+
+                ctx.arc(sumX/count, sumY/count, 25, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
             requestAnimationFrame(loop);
         }
 

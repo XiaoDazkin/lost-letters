@@ -25,3 +25,5 @@ getImageData grabs every pixel number off the canvas, all 800 × 600 of them, as
 for (...; i += 4) walks through the list 4 numbers at a time (one pixel = R, G, B, A). It’s the same as Python’s for, just written differently.
 Inside the if, we set that pixel to (0, 255, 0), which is pure green.
 putImageData paints the edited pixels back onto the canvas.
+
+Careful with “the edges don’t matter” 👀 Those corner dots don’t touch the apples, but they do count in your average. Every stray green pixel pulls the circle a little toward it. If the circle ever drifts or wobbles, that’s why. We’ll fix it properly when we build the real wand, so just note it in game_notes.md for now.
