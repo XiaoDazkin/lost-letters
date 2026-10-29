@@ -4,3 +4,19 @@ Canvas never erases itself. Paint the background first every frame, it’s the e
 
 ctx.arc(400, appleY, 25, 0, Math.PI * 2);
 //       x     y     size start  end
+
+
+
+<video> is a hidden video player. The camera plays into it, and you never see it directly.
+getUserMedia({ video: true }) asks the browser: “can I use the camera?”
+.then(function (stream) {...}) means “when the camera is ready, do this.” Cameras take a moment to wake up, so JS waits instead of freezing.
+video.srcObject = stream plugs the camera into the hidden player.
+drawImage(video, 0, 0, 800, 600) is the new part: every frame, it copies the current camera picture onto your canvas, filling the whole thing.
+
+Hidden video → call video.play() or it may freeze. 
+
+save(): remember the normal settings.
+translate(800, 0): slide the drawing point to the right edge.
+scale(-1, 1): flip left↔right (-1 = flip x, 1 = keep y).
+drawImage(...): draw the camera, now mirrored.
+restore(): go back to normal, so anything drawn after (apples, score) isn’t flipped. Otherwise your score text would come out backwards 🙃

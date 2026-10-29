@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="game" width="800" height="600"></canvas>
+    <video id="cam" autoplay playsinline muted style="display: none"></video>
+
+    <script>
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+        const video = document.getElementById("cam");
+
+        navigator.mediaDevices.getUserMedia({ video:true})
+        .then(function (stream){
+            video.srcObject = stream;
+            video.play();
+        });
+
+        function loop() {
+            ctx.save();
+            ctx.translate(800, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0, 800, 600);
+            ctx.restore();
+            requestAnimationFrame(loop);
+        }
+
+        loop();
+    </script>
+</body>
+</html>
+
