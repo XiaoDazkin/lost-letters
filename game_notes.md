@@ -5,7 +5,7 @@ Canvas never erases itself. Paint the background first every frame, it’s the e
 ctx.arc(400, appleY, 25, 0, Math.PI * 2);
 //       x     y     size start  end
 
-
+r > 180 && g < 80 && b < 80
 
 <video> is a hidden video player. The camera plays into it, and you never see it directly.
 getUserMedia({ video: true }) asks the browser: “can I use the camera?”
@@ -20,3 +20,8 @@ translate(800, 0): slide the drawing point to the right edge.
 scale(-1, 1): flip left↔right (-1 = flip x, 1 = keep y).
 drawImage(...): draw the camera, now mirrored.
 restore(): go back to normal, so anything drawn after (apples, score) isn’t flipped. Otherwise your score text would come out backwards 🙃
+
+getImageData grabs every pixel number off the canvas, all 800 × 600 of them, as one long list.
+for (...; i += 4) walks through the list 4 numbers at a time (one pixel = R, G, B, A). It’s the same as Python’s for, just written differently.
+Inside the if, we set that pixel to (0, 255, 0), which is pure green.
+putImageData paints the edited pixels back onto the canvas.

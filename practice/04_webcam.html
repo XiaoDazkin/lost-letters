@@ -26,6 +26,23 @@
             ctx.scale(-1, 1);
             ctx.drawImage(video, 0, 0, 800, 600);
             ctx.restore();
+
+            const frame = ctx.getImageData(0, 0, 800, 600);
+            const data = frame.data;
+
+            for(let i = 0; i < data.length; i += 4){
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+
+                if(r > 180 && g < 80 && b < 80 ){
+                    data[i] = 0;
+                    data[i + 1] = 255;
+                    data[i + 2] = 0;
+                }
+            }
+            ctx.putImageData(frame, 0, 0); //repaint
+
             requestAnimationFrame(loop);
         }
 
