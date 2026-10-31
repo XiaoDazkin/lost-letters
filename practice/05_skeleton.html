@@ -22,6 +22,7 @@
         let circleX = 400;
         let circleY = 300;
         let circleR = 80;
+        let scanTimer = 0;
 
         canvas.addEventListener("mousemove", function (event) {
             basketX = event.offsetX;
@@ -94,6 +95,9 @@
                 }
             }
             //ctx.putImageData(box, circleX - circleR, circleY - circleR);
+            if(video.videoWidth > 0){
+                scanTimer += 1;
+            }
 
             const avgR = Math.round(sumR/count);
             const avgG = Math.round(sumG/count);
@@ -103,6 +107,9 @@
             ctx.font = "30px sans-serif";
             ctx.textAlign = "center";
             ctx.fillText("Scan your wand!", 400, 200)
+
+            const secondsLeft = Math.ceil((180 - scanTimer) / 60);
+            ctx.fillText(secondsLeft, 400, 450);
 
             ctx.strokeStyle = "gold";
             ctx.lineWidth = 5;
