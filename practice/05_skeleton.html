@@ -7,10 +7,12 @@
 </head>
 <body>
     <canvas id="game" width="800" height="600"></canvas>
+    <video id="cam" autoplay playsinline muted style="display: none"></video>
 
     <script>
         const canvas = document.getElementById("game");
         const ctx = canvas.getContext("2d");
+        const video = document.getElementById("cam");
         
         let title = "Lost Letters";
         let screen = "title";
@@ -23,8 +25,21 @@
         })
 
         canvas.addEventListener("click", function (event) {
-            screen = "play";
+            if(screen == "title"){
+                screen = "scan";
+                startCamera();
+            } else if(screen == "scan"){
+                screen = "play";
+            }
         })
+
+        function startCamera(){
+
+            navigator.mediaDevices.getUserMedia({ video:true}).then(function (stream){
+            video.srcObject = stream;
+            video.play();
+            });
+        }
 
         function drawTitle(){
             ctx.fillStyle = "skyblue";
@@ -39,6 +54,16 @@
             ctx.font = "30px sans-serif";
             ctx.textAlign = "center";
             ctx.fillText("Click to play", 400, 400)
+        }
+
+        function drawScan(){
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, 800, 600)
+
+            ctx.fillStyle = "black";
+            ctx.font = "30px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("Scan your wand!", 400, 200)
         }
 
         function resetApple(a){
@@ -82,11 +107,13 @@
             ctx.textAlign = "left";
             ctx.fillText("Score: " + score, 20, 40);
         }
-        
+
         function loop() {
             if (screen == "title"){
                 drawTitle();
-            } else {
+            } else if (screen == "scan"){
+                drawScan();
+            } else if(screen == "play"){
                 update();
                 draw();
             }

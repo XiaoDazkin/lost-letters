@@ -30,3 +30,5 @@ Careful with “the edges don’t matter” 👀 Those corner dots don’t touch
 
 A screen variable is the sticky note, and loop() reads it every frame to decide what to run.
 Canvas settings like textAlign stay switched on until you change them.
+
+“addEventListener adds, it doesn’t replace. Never put it inside another listener or the loop.”
