@@ -66,6 +66,25 @@
             ctx.drawImage(video, 0, 0, 800, 600);
             ctx.restore();
 
+            const box = ctx.getImageData(circleX - circleR, circleY - circleR, circleR * 2, circleR * 2)
+            const data = box.data;
+
+            let sumR = 0;
+            let sumG = 0;
+            let sumB = 0;
+            let count = 0;
+
+            for (let i = 0; i < data.length; i += 4){
+                sumR += data[i];
+                sumG += data[i + 1];
+                sumB += data[i + 2];
+                count += 1;
+            }
+
+            const avgR = Math.round(sumR/count);
+            const avgG = Math.round(sumG/count);
+            const avgB = Math.round(sumB/count);
+
             ctx.fillStyle = "black";
             ctx.font = "30px sans-serif";
             ctx.textAlign = "center";
@@ -76,6 +95,9 @@
             ctx.beginPath();
             ctx.arc(circleX, circleY, circleR, 0, Math.PI * 2);
             ctx.stroke();
+
+            ctx.fillStyle = "rgb("+ avgR + "," + avgG + "," + avgB + ")";
+            ctx.fillRect(20, 20, 60, 60);
         }
 
         function resetApple(a){
