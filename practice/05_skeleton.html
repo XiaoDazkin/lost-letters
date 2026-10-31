@@ -14,27 +14,29 @@
         
         let basketX = 400;
         let score = 0;
-        let apple = {x: 0, y: 0, speed: 3}
+        let apples = [{x: 0, y: -10, speed: 2 + Math.random() * 3}, {x: 0, y: -5, speed: 2 + Math.random() * 5}, {x: 0, y: -15, speed: 2 + Math.random() * 2}];
 
         canvas.addEventListener("mousemove", function (event) {
             basketX = event.offsetX;
         })
 
-        function resetApple(){
-            apple.y = 0;
-            apple.x = 100 + Math.random() * 600;
+        function resetApple(a){
+            a.y = Math.random() * -50;
+            a.x = 100 + Math.random() * 600;
         }
 
         function update(){
-            apple.y = apple.y + apple.speed;
+            for (let a of apples){
+                a.y = a.y + a.speed;
             
-            if(apple.y > 470 && apple.x > basketX - 50 && apple.x < basketX + 50){
-                score += 1;
-                resetApple();
-            }
+                if(a.y > 470 && a.x > basketX - 50 && a.x < basketX + 50){
+                    score += 1;
+                    resetApple(a);
+                }
 
-            if (apple.y > 500){
-                resetApple();
+                if (a.y > 500){
+                    resetApple(a);
+                }
             }
         }
 
@@ -45,11 +47,12 @@
             ctx.fillStyle = "limegreen";
             ctx.fillRect(0, 500, 800, 100)
 
-            ctx.fillStyle = "red";
-            ctx.beginPath();
-            ctx.arc(apple.x, apple.y, 25, 0, Math.PI * 2);
-            ctx.fill();
-
+            for (let a of apples){
+                ctx.fillStyle = "red";
+                ctx.beginPath();
+                ctx.arc(a.x, a.y, 25, 0, Math.PI * 2);
+                ctx.fill();
+            }
             ctx.fillStyle = "saddlebrown";
             ctx.fillRect(basketX - 50, 470, 100, 30);
 
@@ -63,7 +66,9 @@
             draw();
             requestAnimationFrame(loop);
         }
-        resetApple();
+        for (let a of apples){
+            resetApple(a);
+        }
         loop();   
     </script>
 
