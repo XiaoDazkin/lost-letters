@@ -27,3 +27,6 @@ Inside the if, we set that pixel to (0, 255, 0), which is pure green.
 putImageData paints the edited pixels back onto the canvas.
 
 Careful with “the edges don’t matter” 👀 Those corner dots don’t touch the apples, but they do count in your average. Every stray green pixel pulls the circle a little toward it. If the circle ever drifts or wobbles, that’s why. We’ll fix it properly when we build the real wand, so just note it in game_notes.md for now.
+
+A screen variable is the sticky note, and loop() reads it every frame to decide what to run.
+Canvas settings like textAlign stay switched on until you change them.
