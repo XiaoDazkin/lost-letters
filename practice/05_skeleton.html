@@ -75,11 +75,25 @@
             let count = 0;
 
             for (let i = 0; i < data.length; i += 4){
-                sumR += data[i];
-                sumG += data[i + 1];
-                sumB += data[i + 2];
-                count += 1;
+                const pixel = i / 4;
+                const x = pixel % (circleR * 2);
+                const y = Math.floor(pixel / (circleR * 2));
+
+                const dx = x - circleR;
+                const dy = y - circleR;
+
+                if(dx * dx + dy * dy <  circleR * circleR){
+                    sumR += data[i];
+                    sumG += data[i + 1];
+                    sumB += data[i + 2];
+                    count += 1;
+
+                    //data[i] = 0;
+                    //data[i + 1] = 255;
+                    //data[i + 2] = 0;
+                }
             }
+            //ctx.putImageData(box, circleX - circleR, circleY - circleR);
 
             const avgR = Math.round(sumR/count);
             const avgG = Math.round(sumG/count);

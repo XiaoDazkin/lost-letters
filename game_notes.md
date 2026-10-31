@@ -32,3 +32,8 @@ A screen variable is the sticky note, and loop() reads it every frame to decide 
 Canvas settings like textAlign stay switched on until you change them.
 
 “addEventListener adds, it doesn’t replace. Never put it inside another listener or the loop.”
+
+“One error stops everything below it. If things disappear, look for the first red error in the console.”
+
+“A const/let made inside { } only exists inside those { }.”
+
