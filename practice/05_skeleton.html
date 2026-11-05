@@ -27,6 +27,8 @@
         let tolerance = 60;
         let wandX = 400;
         let wandY = 300;
+        let miniPixels = 50;
+        let wandLost = false;
 
         canvas.addEventListener("mousemove", function (event) {
             basketX = event.offsetX;
@@ -71,7 +73,10 @@
                 }
             }
 
-            if (count > 0){
+            if (count < miniPixels){
+                wandLost = true;
+            } else {
+                wandLost = false;
                 wandX = sumX / count;
                 wandY = sumY / count;
             }
@@ -208,10 +213,19 @@
             ctx.textAlign = "left";
             ctx.fillText("Score: " + score, 20, 40);
 
-            ctx.fillStyle = "blue";
-            ctx.beginPath();
-            ctx.arc(wandX, wandY, 15, 0, Math.PI * 2);
-            ctx.fill();
+            if (wandLost == true){
+                ctx.fillStyle = "rgb(0, 0, 0, 0.5)";
+                ctx.fillRect(0, 0, 800, 600);
+                ctx.fillStyle = "white";
+                ctx.font = "50px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText("Where's your wand?", 400, 300);
+            } else {
+                ctx.fillStyle = "blue";
+                ctx.beginPath();
+                ctx.arc(wandX, wandY, 15, 0, Math.PI * 2);
+                ctx.fill();
+            }
         }
 
         function loop() {
