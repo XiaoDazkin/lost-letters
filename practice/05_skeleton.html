@@ -24,6 +24,9 @@
         let circleR = 80;
         let scanTimer = 0;
         let wandColor = null;
+        let tolerance = 60;
+        let wandX = 400;
+        let wandY = 300;
 
         canvas.addEventListener("mousemove", function (event) {
             basketX = event.offsetX;
@@ -45,6 +48,33 @@
             ctx.restore();
 
             const frame = ctx.getImageData(0, 0, 800, 600);
+            const data = frame.data;
+            let count = 0;
+            let sumX = 0;
+            let sumY = 0;
+
+            for (let i = 0; i < data.length; i += 4){
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+
+                const diff = Math.abs(r - wandColor.r) + Math.abs(g - wandColor.g) + Math.abs(b - wandColor.b);
+                
+                const pixel = i / 4;
+                const x = pixel % 800;
+                const y = Math.floor(pixel / 800);
+
+                if (diff < tolerance){
+                    count += 1;
+                    sumX += x;
+                    sumY += y;
+                }
+            }
+
+            if (count > 0){
+                wandX = sumX / count;
+                wandY = sumY / count;
+            }
         }
 
         function startCamera(){
@@ -177,6 +207,11 @@
             ctx.font = "30px sans-serif";
             ctx.textAlign = "left";
             ctx.fillText("Score: " + score, 20, 40);
+
+            ctx.fillStyle = "blue";
+            ctx.beginPath();
+            ctx.arc(wandX, wandY, 15, 0, Math.PI * 2);
+            ctx.fill();
         }
 
         function loop() {

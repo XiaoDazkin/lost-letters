@@ -39,3 +39,5 @@ Canvas settings like textAlign stay switched on until you change them.
 
 ctx.save without () does nothing and shows no error. Functions need () to run.
 
+“Add positions inside the same if that counts, or sum and count don’t match.”
+
