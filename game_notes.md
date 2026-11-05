@@ -41,3 +41,7 @@ ctx.save without () does nothing and shows no error. Functions need () to run.
 
 “Add positions inside the same if that counts, or sum and count don’t match.”
 
+“fillStyle is used by whatever draws next, so switch colours between shapes.”
+“rgba(..., 0.5): the 4th number is transparency.”
+“Lost wand → skip update(), but keep draw().”
+

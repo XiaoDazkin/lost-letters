@@ -29,6 +29,8 @@
         let wandY = 300;
         let miniPixels = 50;
         let wandLost = false;
+        let searchR = 150;
+        let smooth = 0.3;
 
         canvas.addEventListener("mousemove", function (event) {
             basketX = event.offsetX;
@@ -66,7 +68,11 @@
                 const x = pixel % 800;
                 const y = Math.floor(pixel / 800);
 
-                if (diff < tolerance){
+                const dx = x - wandX;
+                const dy = y - wandY;
+                const near = dx * dx + dy * dy < searchR * searchR;
+
+                if (diff < tolerance && (near || wandLost == true)){
                     count += 1;
                     sumX += x;
                     sumY += y;
@@ -77,8 +83,12 @@
                 wandLost = true;
             } else {
                 wandLost = false;
-                wandX = sumX / count;
-                wandY = sumY / count;
+
+                const targetX = sumX / count;
+                const targetY = sumY / count;
+
+                wandX = wandX + (targetX - wandX) * smooth;
+                wandY = wandY + (targetY - wandY) * smooth;
             }
         }
 
@@ -235,7 +245,9 @@
                 drawScan();
             } else if(screen == "play"){
                 findWand();
-                update();
+                if(wandLost == false){
+                    update();
+                }
                 draw();
             }
             requestAnimationFrame(loop);
