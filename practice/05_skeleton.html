@@ -37,6 +37,16 @@
             }
         })
 
+        function findWand(){
+            ctx.save();
+            ctx.translate(800, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0, 800, 600);
+            ctx.restore();
+
+            const frame = ctx.getImageData(0, 0, 800, 600);
+        }
+
         function startCamera(){
 
             navigator.mediaDevices.getUserMedia({ video:true}).then(function (stream){
@@ -175,6 +185,7 @@
             } else if (screen == "scan"){
                 drawScan();
             } else if(screen == "play"){
+                findWand();
                 update();
                 draw();
             }

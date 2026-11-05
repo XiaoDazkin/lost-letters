@@ -37,3 +37,5 @@ Canvas settings like textAlign stay switched on until you change them.
 
 “A const/let made inside { } only exists inside those { }.”
 
+ctx.save without () does nothing and shows no error. Functions need () to run.
+
