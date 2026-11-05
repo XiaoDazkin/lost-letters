@@ -32,9 +32,8 @@
         canvas.addEventListener("click", function (event) {
             if(screen == "title"){
                 screen = "scan";
+                scanTimer = 0;
                 startCamera();
-            } else if(screen == "scan"){
-                screen = "play";
             }
         })
 
