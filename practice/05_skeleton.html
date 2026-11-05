@@ -23,6 +23,7 @@
         let circleY = 300;
         let circleR = 80;
         let scanTimer = 0;
+        let wandColor = null;
 
         canvas.addEventListener("mousemove", function (event) {
             basketX = event.offsetX;
@@ -102,6 +103,12 @@
             const avgR = Math.round(sumR/count);
             const avgG = Math.round(sumG/count);
             const avgB = Math.round(sumB/count);
+
+            if(scanTimer >= 180){
+                wandColor = {r: avgR, g: avgG, b: avgB};
+                screen = "play";
+                console.log(wandColor);
+            }
 
             ctx.fillStyle = "black";
             ctx.font = "30px sans-serif";
