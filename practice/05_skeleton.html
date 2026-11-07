@@ -201,7 +201,7 @@
 
                     const dx = a.x - wandX;
                     const dy = a.y - wandY;
-                    a.hover = dx * dx + dy * dy < grabR * grabR;
+                    a.hover = heldApple == null && dx * dx + dy * dy < grabR * grabR;
                 
                     if(a.hover == true){
                         a.hold += 1;
@@ -214,6 +214,7 @@
                         a.hold = 0;
                         a.hover = false;
                     }
+
 
                     if (a.y > 500){
                         resetApple(a);
