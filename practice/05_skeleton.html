@@ -35,6 +35,13 @@
         let grabTime = 30;
         let heldApple = null;
 
+        let questions = [
+            {word: "cat", pic: "🐱"},
+            {word: "dog", pic: "🐶"},
+            {word: "car", pic: "🚗"}
+        ];
+        let current = 0;
+
         canvas.addEventListener("click", function (event) {
             if(screen == "title"){
                 screen = "scan";
@@ -229,6 +236,15 @@
 
             ctx.fillStyle = "limegreen";
             ctx.fillRect(0, 500, 800, 100)
+
+            ctx.font = "80px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(questions[current].pic, 400, 100);
+
+            ctx.fillStyle = "black";
+            ctx.font = "30px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("What word is this?", 400, 160);
 
             for (let a of apples){
                 ctx.fillStyle = "red";
