@@ -33,6 +33,7 @@
         let smooth = 0.3;
         let grabR = 40;
         let grabTime = 30;
+        let heldApple = null;
 
         canvas.addEventListener("click", function (event) {
             if(screen == "title"){
@@ -187,25 +188,36 @@
 
         function update(){
             for (let a of apples){
-                a.y = a.y + a.speed;
-
-                const dx = a.x - wandX;
-                const dy = a.y - wandY;
-                a.hover = dx * dx + dy * dy < grabR * grabR;
-                
-                if(a.hover == true){
-                    a.hold += 1;
+                if (a == heldApple){
+                    a.x = wandX;
+                    a.y = wandY;
                 } else {
-                    a.hold = 0;
-                }
-            
-                if(a.y > 470 && a.x > basketX - 50 && a.x < basketX + 50){
-                    score += 1;
-                    resetApple(a);
-                }
+                    a.y = a.y + a.speed;
 
-                if (a.y > 500){
-                    resetApple(a);
+                    const dx = a.x - wandX;
+                    const dy = a.y - wandY;
+                    a.hover = dx * dx + dy * dy < grabR * grabR;
+                
+                    if(a.hover == true){
+                        a.hold += 1;
+                    } else {
+                        a.hold = 0;
+                    }
+
+                    if (a.hold >= grabTime && heldApple == null){
+                        heldApple = a;
+                        a.hold = 0;
+                        a.hover = false;
+                    }
+            
+                    if(a.y > 470 && a.x > basketX - 50 && a.x < basketX + 50){
+                        score += 1;
+                        resetApple(a);
+                    }
+
+                    if (a.y > 500){
+                        resetApple(a);
+                    }
                 }
             }
         }
