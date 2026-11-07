@@ -191,6 +191,11 @@
                 if (a == heldApple){
                     a.x = wandX;
                     a.y = wandY;
+                    if(a.y > 450 && a.x > basketX - 50 && a.x < basketX + 50){
+                        score += 1;
+                        resetApple(a);
+                        heldApple = null;
+                    }
                 } else {
                     a.y = a.y + a.speed;
 
@@ -208,11 +213,6 @@
                         heldApple = a;
                         a.hold = 0;
                         a.hover = false;
-                    }
-            
-                    if(a.y > 470 && a.x > basketX - 50 && a.x < basketX + 50){
-                        score += 1;
-                        resetApple(a);
                     }
 
                     if (a.y > 500){
