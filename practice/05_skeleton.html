@@ -18,7 +18,7 @@
         let screen = "title";
         let basketX = 400;
         let score = 0;
-        let apples = [{x: 0, y: -10, speed: 2 + Math.random() * 3, hover: false}, {x: 0, y: -5, speed: 2 + Math.random() * 5, hover: false}, {x: 0, y: -15, speed: 2 + Math.random() * 2, hover: false}];
+        let apples = [{x: 0, y: -10, speed: 2 + Math.random() * 3, hover: false, hold: 0}, {x: 0, y: -5, speed: 2 + Math.random() * 5, hover: false, hold: 0}, {x: 0, y: -15, speed: 2 + Math.random() * 2, hover: false, hold: 0}];
         let circleX = 400;
         let circleY = 300;
         let circleR = 80;
@@ -32,6 +32,7 @@
         let searchR = 150;
         let smooth = 0.3;
         let grabR = 40;
+        let grabTime = 30;
 
         canvas.addEventListener("click", function (event) {
             if(screen == "title"){
@@ -191,6 +192,12 @@
                 const dx = a.x - wandX;
                 const dy = a.y - wandY;
                 a.hover = dx * dx + dy * dy < grabR * grabR;
+                
+                if(a.hover == true){
+                    a.hold += 1;
+                } else {
+                    a.hold = 0;
+                }
             
                 if(a.y > 470 && a.x > basketX - 50 && a.x < basketX + 50){
                     score += 1;
@@ -220,7 +227,8 @@
                     ctx.strokeStyle = "gold";
                     ctx.lineWidth = 5;
                     ctx.beginPath();
-                    ctx.arc(a.x, a.y, grabR, 0, Math.PI * 2);
+                    const progress = a.hold / grabTime;
+                    ctx.arc(a.x, a.y, grabR, -Math.PI / 2, - Math.PI/ 2 + Math.PI * 2 * progress);
                     ctx.stroke();
                 }
             }
