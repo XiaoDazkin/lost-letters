@@ -278,6 +278,17 @@
             ctx.fillStyle = "limegreen";
             ctx.fillRect(0, 500, 800, 100)
 
+            const barX = 250;
+            const barY = 15;
+            const barW = 300;
+            const barH = 20;
+
+            ctx.fillStyle = "lightgray";
+            ctx.fillRect(barX, barY, barW, barH);
+
+            ctx.fillStyle = "gold";
+            ctx.fillRect(barX, barY, barW * current / questions.length, barH);
+
             ctx.font = "80px sans-serif";
             ctx.textAlign = "center";
             ctx.fillText(questions[current].pic, 400, 100);
