@@ -41,6 +41,8 @@
             {word: "car", pic: "🚗"}
         ];
         let current = 0;
+        let feedbackText = "";
+        let feedbackTimer = 0;
 
         canvas.addEventListener("click", function (event) {
             if(screen == "title"){
@@ -216,6 +218,9 @@
         }
 
         function update(){
+            if (feedbackTimer > 0){
+                feedbackTimer -= 1;
+            }
             for (let a of apples){
                 if (a == heldApple){
                     a.x = wandX;
@@ -224,10 +229,15 @@
                         if(a.word == questions[current].word){
                             score += 1;
                             current += 1;
+                            feedbackText = "Great job!";
+                            feedbackTimer = 60;
                             if(current >= questions.length){
                                 current = 0;
                             }
                             dealWords();
+                        } else {
+                            feedbackText = "Try again!";
+                            feedbackTimer = 60;
                         }
                         resetApple(a);
                         heldApple = null;
@@ -304,6 +314,17 @@
             ctx.font = "30px sans-serif";
             ctx.textAlign = "left";
             ctx.fillText("Score: " + score, 20, 40);
+
+            if (feedbackTimer > 0){
+                if(feedbackText == "Great job!"){
+                    ctx.fillStyle = "green";
+                } else {
+                    ctx.fillStyle = "red";
+                }
+                ctx.font = "50px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText(feedbackText, 400, 300);
+            }
 
             if (wandLost == true){
                 ctx.fillStyle = "rgb(0, 0, 0, 0.5)";
