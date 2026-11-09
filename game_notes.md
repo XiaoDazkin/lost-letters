@@ -48,3 +48,7 @@ ctx.save without () does nothing and shows no error. Functions need () to run.
 “list[0] = first item. list.length = how many.”
 “while repeats as long as it’s true. return hands a value back.”
 
+“A message that lasts = a timer counting DOWN (set to 60, take away 1 per frame).”
+“Check the number, not the text.”
+“Bar/ring = part ÷ whole.”
+
