@@ -45,3 +45,6 @@ ctx.save without () does nothing and shows no error. Functions need () to run.
 “rgba(..., 0.5): the 4th number is transparency.”
 “Lost wand → skip update(), but keep draw().”
 
+“list[0] = first item. list.length = how many.”
+“while repeats as long as it’s true. return hands a value back.”
+
