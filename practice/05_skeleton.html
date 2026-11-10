@@ -16,6 +16,7 @@
         
         let title = "Lost Letters";
         let screen = "title";
+        let mode = "words";
         let basketX = 400;
         let score = 0;
         let apples = [{x: 0, y: -10, speed: 1 + Math.random() * 3, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -5, speed: 1 + Math.random() * 5, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -15, speed: 1 + Math.random() * 2, hover: false, hold: 0, word: "", rotten: false}];
@@ -38,8 +39,7 @@
         let wordSets = [
             [{word: "cat", pic: "🐱"}, {word: "dog", pic: "🐶"}, {word: "car", pic: "🚗"}],
             [{word: "sun", pic: "☀️"}, {word: "bus", pic: "🚌"}, {word: "hat", pic: "🎩"}],
-            [{word: "pig", pic: "🐷"}, {word: "bee", pic: "🐝"}, {word: "fox", pic: "🦊"}],
-            makeMathsSet()
+            [{word: "pig", pic: "🐷"}, {word: "bee", pic: "🐝"}, {word: "fox", pic: "🦊"}]
         ];
 
         let current = 0;
@@ -52,10 +52,25 @@
         let questions = wordSets[level - 1];
 
         canvas.addEventListener("click", function (event) {
-            if(screen == "title"){
-                screen = "scan";
-                scanTimer = 0;
-                startCamera();
+            const x = event.offsetX;
+            const y = event.offsetY;
+
+            if (screen == "title"){
+                if (x > 150 && x < 150 + 220 && y > 250 && y < 250 + 100){
+                    mode = "words";
+                    questions = nextSet();
+                    dealWords();
+                    screen = "scan";
+                    scanTimer = 0;
+                    startCamera();
+                } else if (x > 430 && x < 430 + 220 && y > 250 && y < 250 + 100){
+                    mode = "maths";
+                    questions = nextSet();
+                    dealWords();
+                    screen = "scan";
+                    scanTimer = 0;
+                    startCamera();
+                }
             }
         })
 
@@ -130,10 +145,21 @@
             ctx.textAlign = "center";
             ctx.fillText(title, 400, 100);
 
-            ctx.fillStyle = "black";
-            ctx.font = "30px sans-serif";
+            ctx.fillStyle = "pink";
+            ctx.fillRect(150, 250, 220, 100);
+            ctx.fillStyle = "white";
+            ctx.font = "40px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("Click to play", 400, 400);
+            ctx.textBaseline = "middle";
+            ctx.fillText("📖 Words", 260, 300);
+
+            ctx.fillStyle = "pink";
+            ctx.fillRect(430, 250, 220, 100);
+            ctx.fillStyle = "white";
+            ctx.font = "40px sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("➕ Math", 540, 300);
         }
 
         function questionText(){
@@ -142,6 +168,13 @@
                 return q.ask;
             }
             return "Can you find the " + q.word + "?";
+        }
+
+        function nextSet(){
+            if (mode == "maths"){
+                return makeMathsSet();
+            }
+            return wordSets[(level - 1) % wordSets.length];
         }
 
         function drawScan(){
@@ -305,10 +338,7 @@
                             if(current >= questions.length){
                                 current = 0;
                                 level += 1;
-                                questions = wordSets[(level - 1) % wordSets.length];
-                                if(questions[0].ask){
-                                    questions = makeMathsSet();
-                                }
+                                questions = nextSet();
                                 screen = "levelup";
                                 levelTimer = 120;
                                 say("Level complete!");
