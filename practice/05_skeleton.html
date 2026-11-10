@@ -195,6 +195,13 @@
             a.x = 100 + Math.random() * 600;
         }
 
+        function say(text){
+            speechSynthesis.cancel();
+            const line = new SpeechSynthesisUtterance(text);
+            line.rate = 0.9;
+            speechSynthesis.speak(line);
+        }
+
         function dealWords(){
             const right = questions[current].word;
             const lucky = Math.floor(Math.random() * apples.length);
@@ -231,6 +238,8 @@
                             current += 1;
                             feedbackText = "Great job!";
                             feedbackTimer = 60;
+                            say(feedbackText);
+
                             if(current >= questions.length){
                                 current = 0;
                             }
@@ -240,6 +249,7 @@
                             feedbackText = "Try again!";
                             feedbackTimer = 60;
                             a.rotten = true;
+                            say(feedbackText);
                         }
                         heldApple = null;
                     }

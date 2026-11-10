@@ -52,3 +52,5 @@ ctx.save without () does nothing and shows no error. Functions need () to run.
 “Check the number, not the text.”
 “Bar/ring = part ÷ whole.”
 
+new SpeechSynthesisUtterance(...) makes a new “sentence to speak” bag 🎒 new means “build me a fresh one of these”. It’s the same kind of bag as your apples, just one the browser made for you
+cancel() first, so if the kid gets two answers fast, the voices don’t pile up and queue behind each other
