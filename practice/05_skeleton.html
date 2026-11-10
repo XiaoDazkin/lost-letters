@@ -50,6 +50,8 @@
         let speedUp = 0.5;
         let skies = ["skyblue", "lavender", "powderblue", "peachpuff", "lightyellow"];
         let questions = wordSets[level - 1];
+        let maxLevel = 5;
+        let mistakes = 0;
 
         canvas.addEventListener("click", function (event) {
             const x = event.offsetX;
@@ -70,8 +72,23 @@
                     screen = "scan";
                     scanTimer = 0;
                     startCamera();
+                } 
+            } else if ( screen == "end"){
+                if(x > 290 && x < 290 + 220 && y > 470 && y < 470 + 100){
+                    score = 0;
+                    level = 1;
+                    current = 0;
+                    mistakes = 0;
+                    feedbackTimer = 0;
+                    heldApple = null;
+                    for (let a of apples){
+                        resetApple(a);
+                        a.rotten = false;
+                    }
+                    screen = "title";
                 }
             }
+            
         })
 
         function findWand(){
@@ -129,7 +146,9 @@
         }
 
         function startCamera(){
-
+            if(video.srcObject){
+                return;
+            }
             navigator.mediaDevices.getUserMedia({ video:true}).then(function (stream){
             video.srcObject = stream;
             video.play();
@@ -265,6 +284,29 @@
             }
         }
 
+        function drawEnd(){
+            ctx.fillStyle = "gold";
+            ctx.fillRect(0, 0, 800, 600);
+
+            ctx.fillStyle = "white";
+            ctx.font = "60px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("You did it!", 400, 200);
+            ctx.font = "40px sans-serif";
+            ctx.fillText("⭐ Stars: " + score, 400, 300);
+            ctx.fillText("Levels: " + maxLevel, 400, 360);
+            ctx.fillText("Mistakes: " + mistakes, 400, 420);
+
+            ctx.fillStyle = "pink";
+            ctx.fillRect(290, 470, 220, 100);
+            ctx.fillStyle = "white";
+            ctx.font = "40px sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("Play again", 400, 520);
+
+        }
+
         function resetApple(a){
             a.y = Math.random() * -50;
             a.x = 100 + Math.random() * 600;
@@ -338,10 +380,15 @@
                             if(current >= questions.length){
                                 current = 0;
                                 level += 1;
-                                questions = nextSet();
-                                screen = "levelup";
-                                levelTimer = 120;
-                                say("Level complete!");
+                                if (level > maxLevel){
+                                    screen = "end";
+                                    say("You did it! Well done!");
+                                } else { 
+                                    questions = nextSet();
+                                    screen = "levelup";
+                                    levelTimer = 120;
+                                    say("Level complete!");
+                                }
                             } else {
                                 say(feedbackText + " " + questionText());
                             }
@@ -351,6 +398,7 @@
                             feedbackText = "Try again!";
                             feedbackTimer = 60;
                             a.rotten = true;
+                            mistakes += 1;
                             say(feedbackText);
                         }
                         heldApple = null;
@@ -488,6 +536,8 @@
                 draw();
             } else if(screen == "levelup"){
                 drawLevelUp();
+            } else if(screen == "end"){
+                drawEnd();
             }
             requestAnimationFrame(loop);
         }
