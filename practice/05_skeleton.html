@@ -87,6 +87,8 @@
                 }
             }
 
+            const wasLost = wandLost;
+
             if (count < miniPixels){
                 wandLost = true;
             } else {
@@ -97,6 +99,10 @@
 
                 wandX = wandX + (targetX - wandX) * smooth;
                 wandY = wandY + (targetY - wandY) * smooth;
+            }
+
+            if(wandLost == true && wasLost == false){
+                say("Where's your wand?");
             }
         }
 
