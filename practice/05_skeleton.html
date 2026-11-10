@@ -46,6 +46,7 @@
         let level = 1;
         let levelTimer = 0;
         let speedUp = 0.5;
+        let skies = ["skyblue", "lavender", "powderblue", "peachpuff", "lightyellow"];
 
         canvas.addEventListener("click", function (event) {
             if(screen == "title"){
@@ -318,7 +319,7 @@
         }
 
         function draw(){
-            ctx.fillStyle = "skyblue";
+            ctx.fillStyle = skies[(level - 1) % skies.length];
             ctx.fillRect(0, 0, 800, 600);
 
             ctx.fillStyle = "limegreen";
