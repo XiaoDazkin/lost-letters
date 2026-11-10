@@ -62,3 +62,5 @@ Remember the old value
 Set the new one
 Compare: now true AND before false
 
+return ends the function immediately. Use it to hand a value back, not to choose what to draw.
+

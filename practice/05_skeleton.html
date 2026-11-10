@@ -38,8 +38,9 @@
         let wordSets = [
             [{word: "cat", pic: "🐱"}, {word: "dog", pic: "🐶"}, {word: "car", pic: "🚗"}],
             [{word: "sun", pic: "☀️"}, {word: "bus", pic: "🚌"}, {word: "hat", pic: "🎩"}],
-            [{word: "pig", pic: "🐷"}, {word: "bee", pic: "🐝"}, {word: "fox", pic: "🦊"}]
-        ]
+            [{word: "pig", pic: "🐷"}, {word: "bee", pic: "🐝"}, {word: "fox", pic: "🦊"}],
+            [{word: "5", pic: "2 + 3", ask: "What is 2 plus 3?"}, {word: "3", pic: "🍎🍎🍎", ask: "How many apples?"}, {word: "8", pic: "5 + 3", ask: "What is 5 plus 3?"}]
+        ];
 
         let current = 0;
         let feedbackText = "";
@@ -135,6 +136,14 @@
             ctx.fillText("Click to play", 400, 400);
         }
 
+        function questionText(){
+            const q = questions[current];
+            if(q.ask){
+                return q.ask;
+            }
+            return "Can you find the " + q.word + "?";
+        }
+
         function drawScan(){
             ctx.save();
             ctx.translate(800, 0);
@@ -182,7 +191,7 @@
                 wandColor = {r: avgR, g: avgG, b: avgB};
                 screen = "play";
                 console.log(wandColor);
-                say("Can you find the " + questions[current].word + "?");
+                say(questionText());
             }
 
             ctx.fillStyle = "black";
@@ -219,7 +228,7 @@
                 for (let a of apples){
                     resetApple(a);
                 }
-                say("Can you find the " + questions[current].word + "?");
+                say(questionText());
             }
         }
 
@@ -280,7 +289,7 @@
                                 levelTimer = 120;
                                 say("Level complete!");
                             } else {
-                                say(feedbackText + " Can you find the " + questions[current].word + "?");
+                                say(feedbackText + " " + questionText());
                             }
                             dealWords();
                             resetApple(a);
@@ -346,7 +355,11 @@
             ctx.fillStyle = "black";
             ctx.font = "30px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("What word is this?", 400, 160);
+            if(questions[current].ask){
+                ctx.fillText("Find the answer!", 400, 160);
+            } else {
+                ctx.fillText("What word is this?", 400, 160);
+            }
 
             for (let a of apples){
                 if(a.rotten == true){
