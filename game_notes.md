@@ -1,56 +1,64 @@
-JS is case sensitive. Typos in names like fillStyle fail silently. Black box = color didn't stick.
+Game notes · MD
+Game Notes — Lost Letters
 
-Canvas never erases itself. Paint the background first every frame, it’s the eraser.
-
-ctx.arc(400, appleY, 25, 0, Math.PI * 2);
-//       x     y     size start  end
-
-r > 180 && g < 80 && b < 80
-
-<video> is a hidden video player. The camera plays into it, and you never see it directly.
-getUserMedia({ video: true }) asks the browser: “can I use the camera?”
-.then(function (stream) {...}) means “when the camera is ready, do this.” Cameras take a moment to wake up, so JS waits instead of freezing.
-video.srcObject = stream plugs the camera into the hidden player.
-drawImage(video, 0, 0, 800, 600) is the new part: every frame, it copies the current camera picture onto your canvas, filling the whole thing.
-
-Hidden video → call video.play() or it may freeze. 
-
-save(): remember the normal settings.
-translate(800, 0): slide the drawing point to the right edge.
-scale(-1, 1): flip left↔right (-1 = flip x, 1 = keep y).
-drawImage(...): draw the camera, now mirrored.
-restore(): go back to normal, so anything drawn after (apples, score) isn’t flipped. Otherwise your score text would come out backwards 🙃
-
-getImageData grabs every pixel number off the canvas, all 800 × 600 of them, as one long list.
-for (...; i += 4) walks through the list 4 numbers at a time (one pixel = R, G, B, A). It’s the same as Python’s for, just written differently.
-Inside the if, we set that pixel to (0, 255, 0), which is pure green.
-putImageData paints the edited pixels back onto the canvas.
-
-Careful with “the edges don’t matter” 👀 Those corner dots don’t touch the apples, but they do count in your average. Every stray green pixel pulls the circle a little toward it. If the circle ever drifts or wobbles, that’s why. We’ll fix it properly when we build the real wand, so just note it in game_notes.md for now.
-
-A screen variable is the sticky note, and loop() reads it every frame to decide what to run.
-Canvas settings like textAlign stay switched on until you change them.
-
-“addEventListener adds, it doesn’t replace. Never put it inside another listener or the loop.”
-
-“One error stops everything below it. If things disappear, look for the first red error in the console.”
-
-“A const/let made inside { } only exists inside those { }.”
-
+🐛 Debugging
+JS is case sensitive. Typos like fillstyle fail silently (black box = the colour didn't stick).
+One error stops everything below it. If things disappear or freeze, look for the first red error in the console.
 ctx.save without () does nothing and shows no error. Functions need () to run.
 
-“Add positions inside the same if that counts, or sum and count don’t match.”
+🎨 Canvas drawing
+Canvas never erases itself. Paint the background first every frame — it's the eraser.
+Settings stay switched on until you change them (fillStyle, textAlign, textBaseline…).
+fillStyle is used by whatever draws next, so switch colours between shapes.
+rgba(..., 0.5) — the 4th number is transparency (0 = invisible, 1 = solid).
+js
+ctx.arc(400, appleY, 25, 0, Math.PI * 2);
+//       x     y    size start  end
+Bar / ring = part ÷ whole.
 
-“fillStyle is used by whatever draws next, so switch colours between shapes.”
-“rgba(..., 0.5): the 4th number is transparency.”
-“Lost wand → skip update(), but keep draw().”
+🔁 Game loop & screens
+A screen variable is the sticky note; loop() reads it every frame to decide what to run.
+addEventListener adds, it doesn't replace. Never put it inside another listener or the loop.
+Lost wand → skip update(), but keep draw().
+A message that lasts = a timer counting down (set to 60, take away 1 per frame).
+Check the number, not the text.
 
-“list[0] = first item. list.length = how many.”
-“while repeats as long as it’s true. return hands a value back.”
+📷 Webcam
+<video> is a hidden video player. The camera plays into it; you never see it directly.
+getUserMedia({ video: true }) asks the browser "can I use the camera?"
+.then(function (stream) {...}) = "when the camera is ready, do this." Cameras take a moment to wake up, so JS waits instead of freezing.
+video.srcObject = stream plugs the camera into the hidden player.
+Hidden video → call video.play() or it may freeze.
+drawImage(video, 0, 0, 800, 600) copies the current camera picture onto the canvas every frame.
+Mirroring
+save() — remember the normal settings
+translate(800, 0) — slide the drawing point to the right edge
+scale(-1, 1) — flip left↔right (-1 = flip x, 1 = keep y)
+drawImage(...) — draw the camera, now mirrored
+restore() — back to normal, so apples and score aren't flipped backwards 🙃
 
-“A message that lasts = a timer counting DOWN (set to 60, take away 1 per frame).”
-“Check the number, not the text.”
-“Bar/ring = part ÷ whole.”
+🟢 Reading pixels
+getImageData grabs every pixel number off the canvas as one long list.
+for (...; i += 4) walks the list 4 numbers at a time (one pixel = R, G, B, A). Same as Python's for, written differently.
+Set a pixel to (0, 255, 0) = pure green. putImageData paints edited pixels back.
+Old fixed red rule: r > 180 && g < 80 && b < 80 (replaced by the scanned wand colour).
+Add positions inside the same if that counts, or sum and count don't match.
+Stray matching pixels pull the average toward them → fixed in Week 3 by only counting pixels near the wand.
 
-new SpeechSynthesisUtterance(...) makes a new “sentence to speak” bag 🎒 new means “build me a fresh one of these”. It’s the same kind of bag as your apples, just one the browser made for you
-cancel() first, so if the kid gets two answers fast, the voices don’t pile up and queue behind each other
+📦 Variables, lists & bags
+A const / let made inside { } only exists inside those { }.
+list[0] = first item. list.length = how many. (Not Python's len()!)
+while repeats as long as it's true. return hands a value back.
+new X(...) builds a fresh bag of a built-in kind.
+
+🔊 Voice
+new SpeechSynthesisUtterance(text) makes a "sentence to speak" bag 🎒
+speak() needs that bag, not plain text.
+cancel() first, so voices don't pile up and queue.
+Talking is a "once" thing — call say() at the event, never in draw().
+
+🎯 Catching a change (once, not every frame)
+Remember the old value
+Set the new one
+Compare: now true AND before false
+
