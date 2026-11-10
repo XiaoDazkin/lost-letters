@@ -18,7 +18,7 @@
         let screen = "title";
         let basketX = 400;
         let score = 0;
-        let apples = [{x: 0, y: -10, speed: 2 + Math.random() * 3, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -5, speed: 2 + Math.random() * 5, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -15, speed: 2 + Math.random() * 2, hover: false, hold: 0, word: "", rotten: false}];
+        let apples = [{x: 0, y: -10, speed: 1 + Math.random() * 3, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -5, speed: 1 + Math.random() * 5, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -15, speed: 1 + Math.random() * 2, hover: false, hold: 0, word: "", rotten: false}];
         let circleX = 400;
         let circleY = 300;
         let circleR = 80;
@@ -43,6 +43,9 @@
         let current = 0;
         let feedbackText = "";
         let feedbackTimer = 0;
+        let level = 1;
+        let levelTimer = 0;
+        let speedUp = 0.5;
 
         canvas.addEventListener("click", function (event) {
             if(screen == "title"){
@@ -116,17 +119,17 @@
 
         function drawTitle(){
             ctx.fillStyle = "skyblue";
-            ctx.fillRect(0, 0, 800, 600)
+            ctx.fillRect(0, 0, 800, 600);
 
             ctx.fillStyle = "black";
             ctx.font = "60px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText(title, 400, 100)
+            ctx.fillText(title, 400, 100);
 
             ctx.fillStyle = "black";
             ctx.font = "30px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("Click to play", 400, 400)
+            ctx.fillText("Click to play", 400, 400);
         }
 
         function drawScan(){
@@ -182,7 +185,7 @@
             ctx.fillStyle = "black";
             ctx.font = "30px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("Scan your wand!", 400, 200)
+            ctx.fillText("Scan your wand!", 400, 200);
 
             const secondsLeft = Math.ceil((180 - scanTimer) / 60);
             ctx.fillText(secondsLeft, 400, 450);
@@ -195,6 +198,26 @@
 
             ctx.fillStyle = "rgb("+ avgR + "," + avgG + "," + avgB + ")";
             ctx.fillRect(20, 20, 60, 60);
+        }
+
+        function drawLevelUp(){
+
+            ctx.fillStyle = "gold";
+            ctx.fillRect(0, 0, 800, 600);
+
+            ctx.fillStyle = "white";
+            ctx.font = "40px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("Level complete!", 400, 300);
+            ctx.fillText("Level " + level, 400, 360);
+            levelTimer -= 1;
+            if(levelTimer <= 0){
+                screen = "play";
+                for (let a of apples){
+                    resetApple(a);
+                }
+                say("Can you find the " + questions[current].word + "?");
+            }
         }
 
         function resetApple(a){
@@ -248,9 +271,14 @@
 
                             if(current >= questions.length){
                                 current = 0;
+                                level += 1;
+                                screen = "levelup";
+                                levelTimer = 120;
+                                say("Level complete!");
+                            } else {
+                                say(feedbackText + " Can you find the " + questions[current].word + "?");
                             }
                             dealWords();
-                            say(feedbackText + " Can you find the " + questions[current].word + "?");
                             resetApple(a);
                         } else {
                             feedbackText = "Try again!";
@@ -261,7 +289,7 @@
                         heldApple = null;
                     }
                 } else {
-                    a.y = a.y + a.speed;
+                    a.y = a.y + a.speed + (level - 1) * speedUp;
 
                     const dx = a.x - wandX;
                     const dy = a.y - wandY;
@@ -291,10 +319,10 @@
 
         function draw(){
             ctx.fillStyle = "skyblue";
-            ctx.fillRect(0, 0, 800, 600)
+            ctx.fillRect(0, 0, 800, 600);
 
             ctx.fillStyle = "limegreen";
-            ctx.fillRect(0, 500, 800, 100)
+            ctx.fillRect(0, 500, 800, 100);
 
             const barX = 250;
             const barY = 15;
@@ -387,6 +415,8 @@
                     update();
                 }
                 draw();
+            } else if(screen == "levelup"){
+                drawLevelUp();
             }
             requestAnimationFrame(loop);
         }
