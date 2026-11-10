@@ -35,11 +35,12 @@
         let grabTime = 30;
         let heldApple = null;
 
-        let questions = [
-            {word: "cat", pic: "🐱"},
-            {word: "dog", pic: "🐶"},
-            {word: "car", pic: "🚗"}
-        ];
+        let wordSets = [
+            [{word: "cat", pic: "🐱"}, {word: "dog", pic: "🐶"}, {word: "car", pic: "🚗"}],
+            [{word: "sun", pic: "☀️"}, {word: "bus", pic: "🚌"}, {word: "hat", pic: "🎩"}],
+            [{word: "pig", pic: "🐷"}, {word: "bee", pic: "🐝"}, {word: "fox", pic: "🦊"}]
+        ]
+
         let current = 0;
         let feedbackText = "";
         let feedbackTimer = 0;
@@ -47,6 +48,7 @@
         let levelTimer = 0;
         let speedUp = 0.5;
         let skies = ["skyblue", "lavender", "powderblue", "peachpuff", "lightyellow"];
+        let questions = wordSets[level - 1];
 
         canvas.addEventListener("click", function (event) {
             if(screen == "title"){
@@ -273,6 +275,7 @@
                             if(current >= questions.length){
                                 current = 0;
                                 level += 1;
+                                questions = wordSets[(level - 1) % wordSets.length];
                                 screen = "levelup";
                                 levelTimer = 120;
                                 say("Level complete!");
