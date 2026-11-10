@@ -170,6 +170,7 @@
                 wandColor = {r: avgR, g: avgG, b: avgB};
                 screen = "play";
                 console.log(wandColor);
+                say("Can you find the " + questions[current].word + "?");
             }
 
             ctx.fillStyle = "black";
@@ -238,12 +239,12 @@
                             current += 1;
                             feedbackText = "Great job!";
                             feedbackTimer = 60;
-                            say(feedbackText);
 
                             if(current >= questions.length){
                                 current = 0;
                             }
                             dealWords();
+                            say(feedbackText + " Can you find the " + questions[current].word + "?");
                             resetApple(a);
                         } else {
                             feedbackText = "Try again!";
