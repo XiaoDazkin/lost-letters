@@ -39,7 +39,7 @@
             [{word: "cat", pic: "🐱"}, {word: "dog", pic: "🐶"}, {word: "car", pic: "🚗"}],
             [{word: "sun", pic: "☀️"}, {word: "bus", pic: "🚌"}, {word: "hat", pic: "🎩"}],
             [{word: "pig", pic: "🐷"}, {word: "bee", pic: "🐝"}, {word: "fox", pic: "🦊"}],
-            [{word: "5", pic: "2 + 3", ask: "What is 2 plus 3?"}, {word: "3", pic: "🍎🍎🍎", ask: "How many apples?"}, {word: "8", pic: "5 + 3", ask: "What is 5 plus 3?"}]
+            makeMathsSet()
         ];
 
         let current = 0;
@@ -256,9 +256,30 @@
                 }
             }
         }
+        
+        function makeMathsSet(){
+            const set = [];
+            for (let i = 0; i < 3; i += 1){
+                const a = 1 + Math.floor(Math.random() * 5);
+                const b = 2 + Math.floor(Math.random() * 4);
+                set.push({
+                    word: String(a + b),
+                    pic: a + " + " + b,
+                    ask: "What is " + a + " plus " + b + "?"
+                });
+            }
+            return set;
+        }
 
         function pickWrong(){
             const right = questions[current].word;
+            if (questions[current].ask){
+                let w = right;
+                while(w == right){
+                    w = String(1 + Math.floor(Math.random() * 10));
+                }
+                return w;
+            }
             let w = right;
             while(w == right){
                 w = questions[Math.floor(Math.random() * questions.length)].word;
@@ -285,6 +306,9 @@
                                 current = 0;
                                 level += 1;
                                 questions = wordSets[(level - 1) % wordSets.length];
+                                if(questions[0].ask){
+                                    questions = makeMathsSet();
+                                }
                                 screen = "levelup";
                                 levelTimer = 120;
                                 say("Level complete!");
