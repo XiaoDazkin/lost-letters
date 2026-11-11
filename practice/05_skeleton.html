@@ -506,14 +506,34 @@
         function makeMathsSet(){
             const set = [];
             for (let i = 0; i < 3; i += 1){
-                const a = 1 + Math.floor(Math.random() * 5);
-                const b = 2 + Math.floor(Math.random() * 4);
-                set.push({
-                    word: String(a + b),
-                    pic: a + " + " + b,
-                    ask: "What is " + a + " plus " + b + "?",
-                    type: "maths"
-                });
+                const kind = Math.floor(Math.random() * 3);
+                if (kind == 0){
+                    const n = 2 + Math.floor(Math.random() * 5);
+                    set.push({
+                        word: String(n), 
+                        pic: "🍎".repeat(n), 
+                        ask: "How many apples?", 
+                        type: "maths"
+                    });
+                } else if (kind == 1){
+                    const a = 1 + Math.floor(Math.random() * 5);
+                    const b = 2 + Math.floor(Math.random() * 4);
+                    set.push({
+                        word: String(a + b),
+                        pic: a + " + " + b,
+                        ask: "What is " + a + " plus " + b + "?",
+                        type: "maths"
+                    });
+                } else {
+                    const a = 4 + Math.floor(Math.random() * 6); 
+                    const b = 1 + Math.floor(Math.random() * 3);
+                    set.push({
+                        word: String(a - b), 
+                        pic: a + " − " + b, 
+                        ask: "What is " + a + " take away " + b + "?", 
+                        type: "maths"
+                    });
+                }
             }
             return set;
         }
