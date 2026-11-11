@@ -407,14 +407,27 @@
             ctx.fillStyle = "gold";
             ctx.fillRect(0, 0, 800, 600);
 
-            ctx.fillStyle = "white";
-            ctx.font = "60px sans-serif";
+            ctx.fillStyle = "saddlebrown";
             ctx.textAlign = "center";
-            ctx.fillText("You did it!", 400, 200);
-            ctx.font = "40px sans-serif";
-            ctx.fillText("⭐ Stars: " + score, 400, 300);
-            ctx.fillText("Levels: " + maxLevel, 400, 360);
-            ctx.fillText("Mistakes: " + mistakes, 400, 420);
+            ctx.textBaseline = "middle";
+
+            ctx.font = "50px sans-serif";
+            ctx.fillText("🏡 The Letter Festival!", 400, 90);
+
+            ctx.font = "24px sans-serif";
+            ctx.fillText("You brought all the letters home!", 400, 150);
+            ctx.fillText("The village lights up and every friend dances for you!", 400, 185);
+
+            ctx.font = "50px sans-serif";
+            for (let i = 0; i < lands.length; i += 1){
+                ctx.fillText(lands[i].icon, 160 + i * 120, 260);
+                ctx.fillText("›", 220 + i * 120, 260);
+            }
+            ctx.fillText("🏡", 640, 260);
+
+            ctx.font = "36px sans-serif";
+            ctx.fillText("⭐ Stars: " + score, 400, 340);
+            ctx.fillText("Mistakes: " + mistakes, 400, 390);
 
             ctx.fillStyle = "pink";
             ctx.fillRect(290, 470, 220, 100);
@@ -423,10 +436,7 @@
             ctx.strokeRect(290, 470, 220, 100);
             ctx.fillStyle = "white";
             ctx.font = "40px sans-serif";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
             ctx.fillText("Play again", 400, 520);
-
         }
 
         function resetApple(a){
@@ -514,7 +524,7 @@
                                 level += 1;
                                 if (level > maxLevel){
                                     screen = "end";
-                                    say("You did it! Well done!");
+                                    say("You brought all the letters home! Hooray!");
                                 } else { 
                                     questions = nextSet();
                                     screen = "levelup";
