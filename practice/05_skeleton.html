@@ -36,28 +36,47 @@
         let grabTime = 30;
         let heldApple = null;
 
-        let regions = [
-            {name: "Farm", sky: "skyblue", words: [
-                {word: "cat", pic: "🐱"}, {word: "dog", pic: "🐶"}, {word: "pig", pic: "🐷"}, {word: "cow", pic: "🐮"},
-                {word: "hen", pic: "🐔"}, {word: "duck", pic: "🦆"}, {word: "egg", pic: "🥚"}, {word: "goat", pic: "🐐"}
-            ]},
-            {name: "Sea", sky: "lightcyan", words: [
-                {word: "fish", pic: "🐟"}, {word: "crab", pic: "🦀"}, {word: "boat", pic: "⛵"}, {word: "whale", pic: "🐳"},
-                {word: "shell", pic: "🐚"}, {word: "wave", pic: "🌊"}, {word: "seal", pic: "🦭"}, {word: "swan", pic: "🦢"}
-            ]},
-            {name: "Forest", sky: "honeydew", words: [
-                {word: "fox", pic: "🦊"}, {word: "bee", pic: "🐝"}, {word: "owl", pic: "🦉"}, {word: "bug", pic: "🐛"},
-                {word: "tree", pic: "🌳"}, {word: "leaf", pic: "🍃"}, {word: "frog", pic: "🐸"}, {word: "bear", pic: "🐻"}
-            ]},
-            {name: "Town", sky: "lavender", words: [
-                {word: "car", pic: "🚗"}, {word: "bus", pic: "🚌"}, {word: "hat", pic: "🎩"}, {word: "cup", pic: "☕"},
-                {word: "bed", pic: "🛏️"}, {word: "book", pic: "📖"}, {word: "ball", pic: "⚽"}, {word: "key", pic: "🔑"}
-            ]},
-            {name: "Sky", sky: "lightyellow", words: [
-                {word: "sun", pic: "☀️"}, {word: "moon", pic: "🌙"}, {word: "star", pic: "⭐"}, {word: "cloud", pic: "☁️"},
-                {word: "rain", pic: "🌧️"}, {word: "snow", pic: "❄️"}, {word: "kite", pic: "🪁"}, {word: "bird", pic: "🐦"}
-            ]}
+        let lands = [
+            {name: "Sunny Meadow", icon: "🌼", sky: "skyblue",
+             story: "A magical wind blew the village letters away! Little Rabbit needs help finding them. Catch the apple with the right answer."},
+            {name: "Whispering Forest", icon: "🌲", sky: "darkseagreen",
+             story: "The wind carried letters deep into the forest. The woodland friends know where they hide. Let's explore!"},
+            {name: "Sparkling River", icon: "🌊", sky: "lightcyan",
+             story: "Some letters fell into the river and float on little leaves. Watch carefully and catch the right ones!"},
+            {name: "Cloudy Mountain", icon: "⛰️", sky: "lavender",
+             story: "The strongest winds live here, and they mixed up the letters! Put them back in the right order."}
         ];
+
+        let words = [
+            {word: "cat", pic: "🐱"}, {word: "dog", pic: "🐶"}, {word: "pig", pic: "🐷"}, {word: "cow", pic: "🐮"},
+            {word: "bus", pic: "🚌"}, {word: "sun", pic: "☀️"}, {word: "hat", pic: "🎩"}, {word: "bat", pic: "🦇"},
+            {word: "fox", pic: "🦊"}, {word: "owl", pic: "🦉"}, {word: "ant", pic: "🐜"}, {word: "bee", pic: "🐝"},
+            {word: "egg", pic: "🥚"}, {word: "cup", pic: "🥤"}, {word: "bed", pic: "🛏️"}, {word: "box", pic: "📦"},
+            {word: "car", pic: "🚗"}, {word: "map", pic: "🗺️"}, {word: "pen", pic: "🖊️"}, {word: "key", pic: "🔑"},
+            {word: "leg", pic: "🦵"}, {word: "ear", pic: "👂"}, {word: "bag", pic: "👜"}, {word: "van", pic: "🚐"},
+            {word: "log", pic: "🪵"}, {word: "web", pic: "🕸️"}, {word: "rat", pic: "🐀"}, {word: "bug", pic: "🐛"},
+            {word: "jar", pic: "🫙"}, {word: "mug", pic: "☕"}, {word: "fish", pic: "🐟"}, {word: "frog", pic: "🐸"},
+            {word: "duck", pic: "🦆"}, {word: "bird", pic: "🐦"}, {word: "bear", pic: "🐻"}, {word: "lion", pic: "🦁"},
+            {word: "ball", pic: "⚽"}, {word: "star", pic: "⭐"}, {word: "tree", pic: "🌳"}, {word: "cake", pic: "🎂"},
+            {word: "moon", pic: "🌙"}, {word: "book", pic: "📚"}, {word: "milk", pic: "🥛"}, {word: "rain", pic: "🌧️"},
+            {word: "snow", pic: "❄️"}, {word: "boat", pic: "⛵"}, {word: "kite", pic: "🪁"}, {word: "ship", pic: "🚢"},
+            {word: "shoe", pic: "👟"}, {word: "sock", pic: "🧦"}, {word: "hand", pic: "✋"}, {word: "foot", pic: "🦶"},
+            {word: "door", pic: "🚪"}, {word: "bell", pic: "🔔"}, {word: "corn", pic: "🌽"}, {word: "rose", pic: "🌹"},
+            {word: "crab", pic: "🦀"}, {word: "goat", pic: "🐐"}, {word: "drum", pic: "🥁"}, {word: "fire", pic: "🔥"},
+            {word: "leaf", pic: "🍃"}, {word: "king", pic: "🤴"}, {word: "ring", pic: "💍"}, {word: "rock", pic: "🪨"},
+            {word: "apple", pic: "🍎"}, {word: "horse", pic: "🐴"}, {word: "house", pic: "🏠"}, {word: "train", pic: "🚆"},
+            {word: "pizza", pic: "🍕"}, {word: "robot", pic: "🤖"}, {word: "zebra", pic: "🦓"}, {word: "snake", pic: "🐍"},
+            {word: "mouse", pic: "🐭"}, {word: "tiger", pic: "🐯"}, {word: "whale", pic: "🐳"}, {word: "bread", pic: "🍞"},
+            {word: "grape", pic: "🍇"}, {word: "lemon", pic: "🍋"}, {word: "clock", pic: "🕰️"}, {word: "chair", pic: "🪑"},
+            {word: "heart", pic: "❤️"}, {word: "cloud", pic: "☁️"}, {word: "truck", pic: "🚚"}, {word: "sheep", pic: "🐑"},
+            {word: "panda", pic: "🐼"}, {word: "rocket", pic: "🚀"}, {word: "banana", pic: "🍌"}, {word: "rabbit", pic: "🐰"},
+            {word: "turtle", pic: "🐢"}, {word: "flower", pic: "🌸"}, {word: "pencil", pic: "✏️"}, {word: "monkey", pic: "🐵"},
+            {word: "orange", pic: "🍊"}, {word: "carrot", pic: "🥕"}, {word: "cookie", pic: "🍪"}, {word: "dragon", pic: "🐉"},
+            {word: "guitar", pic: "🎸"}, {word: "spider", pic: "🕷️"}, {word: "penguin", pic: "🐧"}, {word: "giraffe", pic: "🦒"},
+            {word: "rainbow", pic: "🌈"}, {word: "umbrella", pic: "☂️"}, {word: "elephant", pic: "🐘"}, {word: "butterfly", pic: "🦋"}
+        ];
+
+        let lens = [[3,3],[3,4],[3,4],[3,5],[3,5],[4,6],[3,5],[4,7]];
 
         let current = 0;
         let feedbackText = "";
@@ -66,7 +85,7 @@
         let levelTimer = 0;
         let speedUp = 0.2;
         let questions = [];
-        let maxLevel = 25;
+        let maxLevel = 8;
         let mistakes = 0;
         let soundOn = true;
         let hard = false;
@@ -113,8 +132,20 @@
             
         })
 
-        function regionNow(){
-            return Math.floor((level - 1) / 5);
+        function landNow(){
+            return Math.floor((level - 1) / 2);
+        }
+
+        function wordPool(){
+            const min = lens[level - 1][0];
+            const max = lens[level - 1][1];
+            const pool = [];
+            for(let w of words){
+                if (w.word.length >= min && w.word.length <= max){
+                    pool.push(w);
+                }
+            }
+            return pool;
         }
 
         function findWand(){
@@ -262,7 +293,7 @@
         }
 
         function makeWordSet(){
-            const pool = regions[regionNow()].words;
+            const pool = wordPool();
             const set = [];
             while (set.length < 3){
                 const w = pool[Math.floor(Math.random() * pool.length)];
@@ -356,8 +387,8 @@
             ctx.fillStyle = "white";
             ctx.font = "40px sans-serif";
             ctx.textAlign = "center";
-            if((level - 1) % 5 == 0){
-                ctx.fillText("Welcome to the " + regions[regionNow()].name + "!", 400, 300);
+            if((level - 1) % 2 == 0){
+                ctx.fillText("Welcome to the " + lands[landNow()].name + "!", 400, 300);
             } else {
                 ctx.fillText("Level complete!", 400, 300);
             }
@@ -456,8 +487,9 @@
                 return w;
             }
             let w = right;
+            const pool = wordPool();
             while(w == right){
-                w = regions[regionNow()].words[Math.floor(Math.random() * regions[regionNow()].words.length)].word;
+                w = pool[Math.floor(Math.random() * pool.length)].word;
             }
             return w;
         }
@@ -487,8 +519,8 @@
                                     questions = nextSet();
                                     screen = "levelup";
                                     levelTimer = 120;
-                                    if ((level - 1) % 5 == 0){
-                                        say("Welcome to the " + regions[regionNow()].name + "!");
+                                    if ((level - 1) % 2 == 0){
+                                        say("Welcome to the " + lands[landNow()].name + "!");
                                     } else {
                                         say("Level complete!");
                                     }
@@ -541,7 +573,7 @@
         }
 
         function draw(){
-            ctx.fillStyle = regions[regionNow()].sky;
+            ctx.fillStyle = lands[landNow()].sky;
             ctx.fillRect(0, 0, 800, 600);
 
             ctx.fillStyle = "limegreen";
