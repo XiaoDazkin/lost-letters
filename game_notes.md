@@ -68,3 +68,6 @@ return ends the function immediately. Use it to hand a value back, not to choose
 “! flips true ↔ false.”
 “Shapes from points: moveTo → lineTo → closePath → fill.”
 
+“list.includes(x) → is x already in the list?”
+“Drawing goes in draw functions, talking and number changes go in update().”
+

@@ -356,7 +356,11 @@
             ctx.fillStyle = "white";
             ctx.font = "40px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("Level complete!", 400, 300);
+            if((level - 1) % 5 == 0){
+                ctx.fillText("Welcome to the " + regions[regionNow()].name + "!", 400, 300);
+            } else {
+                ctx.fillText("Level complete!", 400, 300);
+            }
             ctx.fillText("Level " + level, 400, 360);
             levelTimer -= 1;
             if(levelTimer <= 0){
@@ -483,7 +487,11 @@
                                     questions = nextSet();
                                     screen = "levelup";
                                     levelTimer = 120;
-                                    say("Level complete!");
+                                    if ((level - 1) % 5 == 0){
+                                        say("Welcome to the " + regions[regionNow()].name + "!");
+                                    } else {
+                                        say("Level complete!");
+                                    }
                                 }
                             } else {
                                 say(feedbackText + " " + questionText());
