@@ -302,6 +302,9 @@
 
         function questionText(){
             const q = questions[current];
+            if (q.type == "listen"){
+                return "Listen! Find the word " + q.word;
+            }
             if(q.ask){
                 return q.ask;
             }
@@ -311,10 +314,16 @@
         function makeWordSet(){
             const pool = wordPool();
             const set = [];
+            const picked = [];
             while (set.length < 3){
                 const w = pool[Math.floor(Math.random() * pool.length)];
-                if(!set.includes(w)){
-                    set.push(w);
+                if(!picked.includes(w.word)){
+                    picked.push(w.word);
+                    const q = {word: w.word, pic: w.pic, type: "picture"};
+                    if (Math.random() < 0.5){
+                        q.type = "listen";
+                    }
+                    set.push(q);
                 }
             }
             return set;
@@ -502,7 +511,8 @@
                 set.push({
                     word: String(a + b),
                     pic: a + " + " + b,
-                    ask: "What is " + a + " plus " + b + "?"
+                    ask: "What is " + a + " plus " + b + "?",
+                    type: "maths"
                 });
             }
             return set;
@@ -510,7 +520,7 @@
 
         function pickWrong(){
             const right = questions[current].word;
-            if (questions[current].ask){
+            if (questions[current].type == "maths"){
                 let w = right;
                 while(w == right){
                     w = String(1 + Math.floor(Math.random() * 10));
@@ -628,13 +638,22 @@
 
             ctx.font = "80px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText(questions[current].pic, 400, 100);
+
+            const q = questions[current];
+            ctx.font = "80px sans-serif";
+            ctx.textAlign = "center";
+            if (q.type == "listen"){
+                ctx.fillText("👂", 400, 100);
+            } else {
+                ctx.fillText(q.pic, 400, 100);
+            }
 
             ctx.fillStyle = "black";
             ctx.font = "30px sans-serif";
-            ctx.textAlign = "center";
-            if(questions[current].ask){
+            if (q.type == "maths"){
                 ctx.fillText("Find the answer!", 400, 160);
+            } else if (q.type == "listen"){
+                ctx.fillText("Listen and find it!", 400, 160);
             } else {
                 ctx.fillText("What word is this?", 400, 160);
             }
