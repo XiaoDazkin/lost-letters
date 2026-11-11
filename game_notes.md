@@ -64,3 +64,7 @@ Compare: now true AND before false
 
 return ends the function immediately. Use it to hand a value back, not to choose what to draw.
 
+“Canvas button = rectangle + text + a click check inside its edges.”
+“! flips true ↔ false.”
+“Shapes from points: moveTo → lineTo → closePath → fill.”
+
