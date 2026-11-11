@@ -52,6 +52,7 @@
         let questions = wordSets[level - 1];
         let maxLevel = 5;
         let mistakes = 0;
+        let soundOn = true;
 
         canvas.addEventListener("click", function (event) {
             const x = event.offsetX;
@@ -72,7 +73,9 @@
                     screen = "scan";
                     scanTimer = 0;
                     startCamera();
-                } 
+                } else if (x > 300 && x < 300 + 200 && y > 400 && y < 400 + 60){
+                    soundOn = !soundOn;
+                }
             } else if ( screen == "end"){
                 if(x > 290 && x < 290 + 220 && y > 470 && y < 470 + 100){
                     score = 0;
@@ -179,6 +182,18 @@
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText("➕ Math", 540, 300);
+
+            ctx.fillStyle = "pink";
+            ctx.fillRect(300, 400, 200, 60);
+            ctx.fillStyle = "white";
+            ctx.font = "30px sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            if(soundOn){
+                ctx.fillText("🔊 Sound: On", 400, 430);
+            } else {
+                ctx.fillText("🔇 Sound: Off", 400, 430);
+            }
         }
 
         function questionText(){
@@ -313,6 +328,9 @@
         }
 
         function say(text){
+            if (soundOn == false){
+                return;
+            }
             speechSynthesis.cancel();
             const line = new SpeechSynthesisUtterance(text);
             line.rate = 0.9;
