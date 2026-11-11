@@ -10,19 +10,24 @@
     <video id="cam" autoplay playsinline muted style="display: none"></video>
 
     <script>
+        // 🖼️ Canvas, pen and hidden camera
         const canvas = document.getElementById("game");
         const ctx = canvas.getContext("2d");
         const video = document.getElementById("cam");
         
+        // 🎮 Game state
         let title = "Lost Letters";
         let screen = "title";
         let mode = "words";
         let basketX = 400;
         let score = 0;
+        // 🍎 The 3 falling apples
         let apples = [{x: 0, y: -10, speed: 0.8 + Math.random() * 0.7, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -5, speed: 0.9 + Math.random() * 0.7, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -15, speed: 1 + Math.random() * 0.7, hover: false, hold: 0, word: "", rotten: false}];
+        // 📷 Wand scan circle
         let circleX = 400;
         let circleY = 300;
         let circleR = 80;
+        // 🪄 Wand tracking
         let scanTimer = 0;
         let wandColor = null;
         let tolerance = 60;
@@ -32,10 +37,12 @@
         let wandLost = false;
         let searchR = 150;
         let smooth = 0.3;
+        // ✋ Grabbing
         let grabR = 40;
         let grabTime = 30;
         let heldApple = null;
 
+        // 🗺️ The 4 lands (Letter Village comes after)
         let lands = [
             {name: "Sunny Meadow", icon: "🌼", sky: "skyblue", friend: "🐰",
              story: "A magical wind blew the village letters away! Little Rabbit needs help finding them. Catch the apple with the right answer."},
@@ -47,6 +54,7 @@
              story: "The strongest winds live here, and they mixed up the letters! Put them back in the right order."}
         ];
 
+        // 📚 Word bank (104 words)
         let words = [
             {word: "cat", pic: "🐱"}, {word: "dog", pic: "🐶"}, {word: "pig", pic: "🐷"}, {word: "cow", pic: "🐮"},
             {word: "bus", pic: "🚌"}, {word: "sun", pic: "☀️"}, {word: "hat", pic: "🎩"}, {word: "bat", pic: "🦇"},
@@ -76,8 +84,10 @@
             {word: "rainbow", pic: "🌈"}, {word: "umbrella", pic: "☂️"}, {word: "elephant", pic: "🐘"}, {word: "butterfly", pic: "🦋"}
         ];
 
+        // 📏 Word lengths per level (min, max)
         let lens = [[3,3],[3,4],[3,4],[3,5],[3,5],[4,6],[3,5],[4,7]];
 
+        // 📊 Progress, levels and settings
         let current = 0;
         let feedbackText = "";
         let feedbackTimer = 0;
@@ -90,11 +100,13 @@
         let soundOn = true;
         let hard = false;
 
+        // 🖱️ Clicks on title and end screen buttons
         canvas.addEventListener("click", function (event) {
             const x = event.offsetX;
             const y = event.offsetY;
 
             if (screen == "title"){
+                // 📖 Words button
                 if (x > 150 && x < 150 + 220 && y > 250 && y < 250 + 100){
                     mode = "words";
                     questions = nextSet();
@@ -102,6 +114,7 @@
                     screen = "scan";
                     scanTimer = 0;
                     startCamera();
+                // ➕ Math button
                 } else if (x > 430 && x < 430 + 220 && y > 250 && y < 250 + 100){
                     mode = "maths";
                     questions = nextSet();
@@ -109,12 +122,15 @@
                     screen = "scan";
                     scanTimer = 0;
                     startCamera();
+                // 🔊 Sound toggle
                 } else if (x > 300 && x < 300 + 200 && y > 400 && y < 400 + 60){
                     soundOn = !soundOn;
+                // 🐢 Easy / Hard toggle
                 } else if(x > 300 && x < 300 + 200 && y > 480 && y < 480 + 60){
                     hard = !hard;
                 }
             } else if ( screen == "end"){
+                // 🔁 Play again: reset everything
                 if(x > 290 && x < 290 + 220 && y > 470 && y < 470 + 100){
                     score = 0;
                     level = 1;
@@ -132,10 +148,12 @@
             
         })
 
+        // 🗺️ Which land are we in? (0–3)
         function landNow(){
             return Math.floor((level - 1) / 2);
         }
 
+        // ✏️ Write long text over several lines
         function drawWrapped(text, x, y, maxW, lineH){
             const parts = text.split(" ");
             let line = "";
@@ -152,6 +170,7 @@
             ctx.fillText(line, x, y);
         }
 
+        // 📚 Words with the right length for this level
         function wordPool(){
             const min = lens[level - 1][0];
             const max = lens[level - 1][1];
@@ -164,6 +183,7 @@
             return pool;
         }
 
+        // 🪄 Find the wand colour in the camera picture
         function findWand(){
             ctx.save();
             ctx.translate(800, 0);
@@ -171,6 +191,7 @@
             ctx.drawImage(video, 0, 0, 800, 600);
             ctx.restore();
 
+            // check every pixel near the wand
             const frame = ctx.getImageData(0, 0, 800, 600);
             const data = frame.data;
             let count = 0;
@@ -199,6 +220,7 @@
                 }
             }
 
+            // lost or found? smooth the movement
             const wasLost = wandLost;
 
             if (count < miniPixels){
@@ -213,11 +235,13 @@
                 wandY = wandY + (targetY - wandY) * smooth;
             }
 
+            // say it only once, when it gets lost
             if(wandLost == true && wasLost == false){
                 say("Where's your wand?");
             }
         }
 
+        // 📷 Turn on the webcam (only once)
         function startCamera(){
             if(video.srcObject){
                 return;
@@ -228,6 +252,7 @@
             });
         }
 
+        // 🏠 Title screen
         function drawTitle(){
             ctx.fillStyle = "skyblue";
             ctx.fillRect(0, 0, 800, 600);
@@ -300,10 +325,14 @@
             }
         }
 
+        // 🗣️ What Pip says for this question
         function questionText(){
             const q = questions[current];
             if (q.type == "listen"){
                 return "Listen! Find the word " + q.word;
+            }
+            if(q.type == "missing"){
+                return "Which letter is missing in " + q.full + "?";
             }
             if(q.ask){
                 return q.ask;
@@ -311,6 +340,7 @@
             return "Can you find the " + q.word + "?";
         }
 
+        // 📖 3 word questions (picture / listen / missing)
         function makeWordSet(){
             const pool = wordPool();
             const set = [];
@@ -320,8 +350,16 @@
                 if(!picked.includes(w.word)){
                     picked.push(w.word);
                     const q = {word: w.word, pic: w.pic, type: "picture"};
-                    if (Math.random() < 0.5){
+                    // roll the dice for the puzzle type
+                    const kind = Math.floor(Math.random() * 3);
+                    if (kind == 1){
                         q.type = "listen";
+                    } else if (kind == 2){
+                        const i = Math.floor(Math.random() * w.word.length);  
+                        q.type = "missing";
+                        q.full = w.word;
+                        q.word = w.word[i];
+                        q.shown = w.word.slice(0, i) + "_" + w.word.slice(i + 1);
                     }
                     set.push(q);
                 }
@@ -329,6 +367,7 @@
             return set;
         }
 
+        // 🎲 Next 3 questions: words or maths
         function nextSet(){
             if (mode == "maths"){
                 return makeMathsSet();
@@ -336,6 +375,7 @@
             return makeWordSet();
         }
 
+        // 📷 Scan screen: learn the wand colour
         function drawScan(){
             ctx.save();
             ctx.translate(800, 0);
@@ -346,6 +386,7 @@
             const box = ctx.getImageData(circleX - circleR, circleY - circleR, circleR * 2, circleR * 2)
             const data = box.data;
 
+            // average colour inside the circle
             let sumR = 0;
             let sumG = 0;
             let sumB = 0;
@@ -379,6 +420,7 @@
             const avgG = Math.round(sumG/count);
             const avgB = Math.round(sumB/count);
 
+            // 3 seconds done → save colour, start the story
             if(scanTimer >= 180){
                 wandColor = {r: avgR, g: avgG, b: avgB};
                 screen = "levelup";
@@ -404,6 +446,7 @@
             ctx.fillRect(20, 20, 60, 60);
         }
 
+        // ⭐ Level complete / new land story card
         function drawLevelUp(){
 
             ctx.fillStyle = "gold";
@@ -412,6 +455,7 @@
             ctx.fillStyle = "white";
             ctx.font = "40px sans-serif";
             ctx.textAlign = "center";
+            // new land → Pip, friend and story
             if((level - 1) % 2 == 0){
                 ctx.font = "90px sans-serif";
                 ctx.fillText("🦊 " + lands[landNow()].friend, 400, 170);
@@ -424,6 +468,7 @@
                 ctx.fillText("Level complete!", 400, 300);
             }
             ctx.fillText("Level " + level, 400, 360);
+            // count down, then back to play
             levelTimer -= 1;
             if(levelTimer <= 0){
                 screen = "play";
@@ -434,6 +479,7 @@
             }
         }
 
+        // 🏡 Letter Festival end screen
         function drawEnd(){
             ctx.fillStyle = "gold";
             ctx.fillRect(0, 0, 800, 600);
@@ -449,6 +495,7 @@
             ctx.fillText("The village lights up and every friend dances for you!", 400, 185);
 
             ctx.font = "50px sans-serif";
+            // journey path 🌼 › 🌲 › 🌊 › ⛰️ › 🏡
             for (let i = 0; i < lands.length; i += 1){
                 ctx.fillText(lands[i].icon, 160 + i * 120, 260);
                 ctx.fillText("›", 220 + i * 120, 260);
@@ -469,11 +516,13 @@
             ctx.fillText("Play again", 400, 520);
         }
 
+        // 🍎 Send an apple back to the top
         function resetApple(a){
             a.y = Math.random() * -50;
             a.x = 100 + Math.random() * 600;
         }
 
+        // 🔊 Pip talks
         function say(text){
             if (soundOn == false){
                 return;
@@ -484,6 +533,7 @@
             speechSynthesis.speak(line);
         }
 
+        // 🍎 Put the right answer + 2 wrong ones on the apples
         function dealWords(){
             const right = questions[current].word;
             const lucky = Math.floor(Math.random() * apples.length);
@@ -503,6 +553,7 @@
             }
         }
         
+        // ➕ 3 maths questions (count / add / subtract)
         function makeMathsSet(){
             const set = [];
             for (let i = 0; i < 3; i += 1){
@@ -538,8 +589,20 @@
             return set;
         }
 
+        // ❌ Pick one wrong answer
         function pickWrong(){
             const right = questions[current].word;
+            // wrong letter
+            if (questions[current].type == "missing"){
+                const abc = "abcdefghijklmnopqrstuvwxyz";
+                let w = right;
+                while(w == right){
+                    w = abc[Math.floor(Math.random() * abc.length)];
+                }
+                return w;
+            }
+
+            // wrong number
             if (questions[current].type == "maths"){
                 let w = right;
                 while(w == right){
@@ -548,6 +611,7 @@
                 return w;
             }
             let w = right;
+            // wrong word
             const pool = wordPool();
             while(w == right){
                 w = pool[Math.floor(Math.random() * pool.length)].word;
@@ -555,21 +619,26 @@
             return w;
         }
 
+        // 🔄 Game logic every frame
         function update(){
             if (feedbackTimer > 0){
                 feedbackTimer -= 1;
             }
             for (let a of apples){
+                // carrying an apple
                 if (a == heldApple){
                     a.x = wandX;
                     a.y = wandY;
+                    // dropped in the basket
                     if(a.y > 450 && a.x > basketX - 50 && a.x < basketX + 50){
+                        // ✅ right answer
                         if(a.word == questions[current].word){
                             score += 1;
                             current += 1;
                             feedbackText = "Great job!";
                             feedbackTimer = 60;
 
+                            // level done
                             if(current >= questions.length){
                                 current = 0;
                                 level += 1;
@@ -593,6 +662,7 @@
                             dealWords();
                             resetApple(a);
                         } else {
+                            // ❌ wrong answer
                             feedbackText = "Try again!";
                             feedbackTimer = 60;
                             a.rotten = true;
@@ -602,12 +672,14 @@
                         heldApple = null;
                     }
                 } else {
+                    // falling apple: speed up each level
                     let bonus = (level - 1) * speedUp;
                     if(hard){
                         bonus += 0.8;
                     }
                     a.y = a.y + a.speed + bonus;
 
+                    // hover and grab
                     const dx = a.x - wandX;
                     const dy = a.y - wandY;
                     a.hover = heldApple == null && dx * dx + dy * dy < grabR * grabR && a.rotten == false;
@@ -626,6 +698,7 @@
                     }
 
 
+                    // hit the grass → back to the top
                     if (a.y > 500){
                         resetApple(a);
                         a.rotten = false;
@@ -634,17 +707,21 @@
             }
         }
 
+        // 🎨 Draw the play screen
         function draw(){
+            // sky and grass
             ctx.fillStyle = lands[landNow()].sky;
             ctx.fillRect(0, 0, 800, 600);
 
             ctx.fillStyle = "limegreen";
             ctx.fillRect(0, 500, 800, 100);
 
+            // Pip on the grass
             ctx.font = "60px sans-serif";
             ctx.textAlign = "center";
             ctx.fillText("🦊", 60, 550);
 
+            // progress bar
             const barX = 250;
             const barY = 15;
             const barW = 300;
@@ -656,28 +733,36 @@
             ctx.fillStyle = "gold";
             ctx.fillRect(barX, barY, barW * current / questions.length, barH);
 
-            ctx.font = "80px sans-serif";
-            ctx.textAlign = "center";
-
             const q = questions[current];
+
+            // 1. the picture
+            ctx.fillStyle = "black";
             ctx.font = "80px sans-serif";
             ctx.textAlign = "center";
             if (q.type == "listen"){
                 ctx.fillText("👂", 400, 100);
+            } else if (q.type == "missing"){
+                ctx.fillText(q.pic, 300, 100);
+                ctx.font = "60px sans-serif";
+                ctx.fillText(q.shown, 480, 100);
             } else {
                 ctx.fillText(q.pic, 400, 100);
             }
 
+            // 2. the prompt
             ctx.fillStyle = "black";
             ctx.font = "30px sans-serif";
             if (q.type == "maths"){
                 ctx.fillText("Find the answer!", 400, 160);
             } else if (q.type == "listen"){
                 ctx.fillText("Listen and find it!", 400, 160);
+            } else if (q.type == "missing"){
+                ctx.fillText("Find the missing letter!", 400, 160);
             } else {
                 ctx.fillText("What word is this?", 400, 160);
             }
 
+            // apples: body, stem, leaf, word, grab ring
             for (let a of apples){
                 if(a.rotten == true){
                     ctx.fillStyle = "sienna";
@@ -714,6 +799,7 @@
 
             ctx.fillStyle = "saddlebrown";
             ctx.beginPath();
+            // basket
             ctx.moveTo(basketX - 60, 470);
             ctx.lineTo(basketX + 60, 470);
             ctx.lineTo(basketX + 30, 510);
@@ -724,8 +810,10 @@
             ctx.fillStyle = "black";
             ctx.font = "40px sans-serif";
             ctx.textAlign = "left";
+            // stars
             ctx.fillText("⭐: " + score, 20, 40);
 
+            // Great job / Try again
             if (feedbackTimer > 0){
                 if(feedbackText == "Great job!"){
                     ctx.fillStyle = "green";
@@ -737,6 +825,7 @@
                 ctx.fillText(feedbackText, 400, 300);
             }
 
+            // wand lost overlay, or the blue wand dot
             if (wandLost == true){
                 ctx.fillStyle = "rgb(0, 0, 0, 0.5)";
                 ctx.fillRect(0, 0, 800, 600);
@@ -752,6 +841,7 @@
             }
         }
 
+        // 🔁 Main loop: run the right screen every frame
         function loop() {
             if (screen == "title"){
                 drawTitle();
@@ -770,6 +860,7 @@
             }
             requestAnimationFrame(loop);
         }
+        // ▶️ Start
         for (let a of apples){
             resetApple(a);
         }
