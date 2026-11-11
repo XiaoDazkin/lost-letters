@@ -36,10 +36,27 @@
         let grabTime = 30;
         let heldApple = null;
 
-        let wordSets = [
-            [{word: "cat", pic: "🐱"}, {word: "dog", pic: "🐶"}, {word: "car", pic: "🚗"}],
-            [{word: "sun", pic: "☀️"}, {word: "bus", pic: "🚌"}, {word: "hat", pic: "🎩"}],
-            [{word: "pig", pic: "🐷"}, {word: "bee", pic: "🐝"}, {word: "fox", pic: "🦊"}]
+        let regions = [
+            {name: "Farm", sky: "skyblue", words: [
+                {word: "cat", pic: "🐱"}, {word: "dog", pic: "🐶"}, {word: "pig", pic: "🐷"}, {word: "cow", pic: "🐮"},
+                {word: "hen", pic: "🐔"}, {word: "duck", pic: "🦆"}, {word: "egg", pic: "🥚"}, {word: "goat", pic: "🐐"}
+            ]},
+            {name: "Sea", sky: "lightcyan", words: [
+                {word: "fish", pic: "🐟"}, {word: "crab", pic: "🦀"}, {word: "boat", pic: "⛵"}, {word: "whale", pic: "🐳"},
+                {word: "shell", pic: "🐚"}, {word: "wave", pic: "🌊"}, {word: "seal", pic: "🦭"}, {word: "swan", pic: "🦢"}
+            ]},
+            {name: "Forest", sky: "honeydew", words: [
+                {word: "fox", pic: "🦊"}, {word: "bee", pic: "🐝"}, {word: "owl", pic: "🦉"}, {word: "bug", pic: "🐛"},
+                {word: "tree", pic: "🌳"}, {word: "leaf", pic: "🍃"}, {word: "frog", pic: "🐸"}, {word: "bear", pic: "🐻"}
+            ]},
+            {name: "Town", sky: "lavender", words: [
+                {word: "car", pic: "🚗"}, {word: "bus", pic: "🚌"}, {word: "hat", pic: "🎩"}, {word: "cup", pic: "☕"},
+                {word: "bed", pic: "🛏️"}, {word: "book", pic: "📖"}, {word: "ball", pic: "⚽"}, {word: "key", pic: "🔑"}
+            ]},
+            {name: "Sky", sky: "lightyellow", words: [
+                {word: "sun", pic: "☀️"}, {word: "moon", pic: "🌙"}, {word: "star", pic: "⭐"}, {word: "cloud", pic: "☁️"},
+                {word: "rain", pic: "🌧️"}, {word: "snow", pic: "❄️"}, {word: "kite", pic: "🪁"}, {word: "bird", pic: "🐦"}
+            ]}
         ];
 
         let current = 0;
@@ -48,9 +65,8 @@
         let level = 1;
         let levelTimer = 0;
         let speedUp = 0.2;
-        let skies = ["skyblue", "lavender", "powderblue", "peachpuff", "lightyellow"];
-        let questions = wordSets[level - 1];
-        let maxLevel = 5;
+        let questions = [];
+        let maxLevel = 25;
         let mistakes = 0;
         let soundOn = true;
         let hard = false;
@@ -96,6 +112,10 @@
             }
             
         })
+
+        function regionNow(){
+            return Math.floor((level - 1) / 5);
+        }
 
         function findWand(){
             ctx.save();
@@ -241,11 +261,23 @@
             return "Can you find the " + q.word + "?";
         }
 
+        function makeWordSet(){
+            const pool = regions[regionNow()].words;
+            const set = [];
+            while (set.length < 3){
+                const w = pool[Math.floor(Math.random() * pool.length)];
+                if(!set.includes(w)){
+                    set.push(w);
+                }
+            }
+            return set;
+        }
+
         function nextSet(){
             if (mode == "maths"){
                 return makeMathsSet();
             }
-            return wordSets[(level - 1) % wordSets.length];
+            return makeWordSet();
         }
 
         function drawScan(){
@@ -380,12 +412,18 @@
         function dealWords(){
             const right = questions[current].word;
             const lucky = Math.floor(Math.random() * apples.length);
+            const used = [right];
 
             for(let i = 0; i < apples.length; i += 1){
                 if (i == lucky){
                     apples[i].word = right;
                 } else {
-                    apples[i].word = pickWrong();
+                    let w = pickWrong();
+                    while (used.includes(w)){
+                        w = pickWrong();
+                    }
+                    used.push(w);
+                    apples[i].word = w;
                 }
             }
         }
@@ -415,7 +453,7 @@
             }
             let w = right;
             while(w == right){
-                w = questions[Math.floor(Math.random() * questions.length)].word;
+                w = regions[regionNow()].words[Math.floor(Math.random() * regions[regionNow()].words.length)].word;
             }
             return w;
         }
@@ -495,7 +533,7 @@
         }
 
         function draw(){
-            ctx.fillStyle = skies[(level - 1) % skies.length];
+            ctx.fillStyle = regions[regionNow()].sky;
             ctx.fillRect(0, 0, 800, 600);
 
             ctx.fillStyle = "limegreen";
@@ -620,8 +658,6 @@
         for (let a of apples){
             resetApple(a);
         }
-        
-        dealWords();
         loop();   
     </script>
 
