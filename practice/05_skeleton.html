@@ -183,6 +183,22 @@
             return pool;
         }
 
+        // 🔀 Mix up the letters of a word
+        function scramble(word){
+            let s = word;
+            while (s == word){
+                const letters = word.split("");
+                let out = "";
+                while (letters.length > 0){
+                    const i = Math.floor(Math.random() * letters.length);
+                    out += letters[i];
+                    letters.splice(i, 1);
+                }
+                s = out;
+            }
+            return s;
+        }
+
         // 🪄 Find the wand colour in the camera picture
         function findWand(){
             ctx.save();
@@ -334,13 +350,16 @@
             if(q.type == "missing"){
                 return "Which letter is missing in " + q.full + "?";
             }
+            if (q.type == "unscramble"){
+                return "Unscramble the letters!";
+            }
             if(q.ask){
                 return q.ask;
             }
             return "Can you find the " + q.word + "?";
         }
 
-        // 📖 3 word questions (picture / listen / missing)
+        // 📖 3 word questions (picture / listen / missing / unscramble)
         function makeWordSet(){
             const pool = wordPool();
             const set = [];
@@ -351,7 +370,7 @@
                     picked.push(w.word);
                     const q = {word: w.word, pic: w.pic, type: "picture"};
                     // roll the dice for the puzzle type
-                    const kind = Math.floor(Math.random() * 3);
+                    const kind = Math.floor(Math.random() * 4);
                     if (kind == 1){
                         q.type = "listen";
                     } else if (kind == 2){
@@ -360,6 +379,9 @@
                         q.full = w.word;
                         q.word = w.word[i];
                         q.shown = w.word.slice(0, i) + "_" + w.word.slice(i + 1);
+                    } else if (kind == 3){
+                        q.type = "unscramble";
+                        q.shown = scramble(w.word);
                     }
                     set.push(q);
                 }
@@ -741,7 +763,7 @@
             ctx.textAlign = "center";
             if (q.type == "listen"){
                 ctx.fillText("👂", 400, 100);
-            } else if (q.type == "missing"){
+            } else if (q.type == "missing" || q.type == "unscramble"){
                 ctx.fillText(q.pic, 300, 100);
                 ctx.font = "60px sans-serif";
                 ctx.fillText(q.shown, 480, 100);
@@ -758,6 +780,8 @@
                 ctx.fillText("Listen and find it!", 400, 160);
             } else if (q.type == "missing"){
                 ctx.fillText("Find the missing letter!", 400, 160);
+            }  else if (q.type == "unscramble"){
+                ctx.fillText("Unscramble the letters!", 400, 160);
             } else {
                 ctx.fillText("What word is this?", 400, 160);
             }
