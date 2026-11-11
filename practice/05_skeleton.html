@@ -166,12 +166,25 @@
             ctx.fillRect(0, 0, 800, 600);
 
             ctx.fillStyle = "black";
+            ctx.font = "80px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("🍎", 400, 80);
+
+            ctx.fillStyle = "black";
             ctx.font = "60px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText(title, 400, 100);
+            ctx.fillText(title, 400, 150);
+
+            ctx.fillStyle = "black";
+            ctx.font = "24px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("Grab the right apple with your magic wand!", 400, 190);
 
             ctx.fillStyle = "pink";
             ctx.fillRect(150, 250, 220, 100);
+            ctx.strokeStyle = "hotpink";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(150, 250, 220, 100);
             ctx.fillStyle = "white";
             ctx.font = "40px sans-serif";
             ctx.textAlign = "center";
@@ -180,6 +193,9 @@
 
             ctx.fillStyle = "pink";
             ctx.fillRect(430, 250, 220, 100);
+            ctx.strokeStyle = "hotpink";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(430, 250, 220, 100);
             ctx.fillStyle = "white";
             ctx.font = "40px sans-serif";
             ctx.textAlign = "center";
@@ -188,6 +204,9 @@
 
             ctx.fillStyle = "pink";
             ctx.fillRect(300, 400, 200, 60);
+            ctx.strokeStyle = "hotpink";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(300, 400, 200, 60);
             ctx.fillStyle = "white";
             ctx.font = "30px sans-serif";
             ctx.textAlign = "center";
@@ -200,6 +219,9 @@
 
             ctx.fillStyle = "pink";
             ctx.fillRect(300, 480, 200, 60);
+            ctx.strokeStyle = "hotpink";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(300, 480, 200, 60);
             ctx.fillStyle = "white";
             ctx.font = "30px sans-serif";
             ctx.textAlign = "center";
@@ -329,6 +351,9 @@
 
             ctx.fillStyle = "pink";
             ctx.fillRect(290, 470, 220, 100);
+            ctx.strokeStyle = "hotpink";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(290, 470, 220, 100);
             ctx.fillStyle = "white";
             ctx.font = "40px sans-serif";
             ctx.textAlign = "center";
@@ -510,6 +535,14 @@
                 ctx.arc(a.x, a.y, 25, 0, Math.PI * 2);
                 ctx.fill();
 
+                ctx.fillStyle = "saddlebrown";
+                ctx.fillRect(a.x - 2, a.y - 35, 4, 10);
+
+                ctx.fillStyle = "green";
+                ctx.beginPath();
+                ctx.arc(a.x + 6, a.y - 30, 6, 0, Math.PI * 2);
+                ctx.fill();
+
                 ctx.fillStyle = "white";
                 ctx.font = "20px sans-serif";
                 ctx.textAlign = "center";
@@ -527,7 +560,13 @@
             }
 
             ctx.fillStyle = "saddlebrown";
-            ctx.fillRect(basketX - 50, 470, 100, 30);
+            ctx.beginPath();
+            ctx.moveTo(basketX - 60, 470);
+            ctx.lineTo(basketX + 60, 470);
+            ctx.lineTo(basketX + 30, 510);
+            ctx.lineTo(basketX - 30, 510);
+            ctx.closePath();
+            ctx.fill();
 
             ctx.fillStyle = "black";
             ctx.font = "40px sans-serif";
