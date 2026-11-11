@@ -37,13 +37,13 @@
         let heldApple = null;
 
         let lands = [
-            {name: "Sunny Meadow", icon: "🌼", sky: "skyblue",
+            {name: "Sunny Meadow", icon: "🌼", sky: "skyblue", friend: "🐰",
              story: "A magical wind blew the village letters away! Little Rabbit needs help finding them. Catch the apple with the right answer."},
-            {name: "Whispering Forest", icon: "🌲", sky: "darkseagreen",
+            {name: "Whispering Forest", icon: "🌲", sky: "darkseagreen", friend: "🐿️",
              story: "The wind carried letters deep into the forest. The woodland friends know where they hide. Let's explore!"},
-            {name: "Sparkling River", icon: "🌊", sky: "lightcyan",
+            {name: "Sparkling River", icon: "🌊", sky: "lightcyan", friend: "🦦",
              story: "Some letters fell into the river and float on little leaves. Watch carefully and catch the right ones!"},
-            {name: "Cloudy Mountain", icon: "⛰️", sky: "lavender",
+            {name: "Cloudy Mountain", icon: "⛰️", sky: "lavender", friend: "🐐",
              story: "The strongest winds live here, and they mixed up the letters! Put them back in the right order."}
         ];
 
@@ -136,6 +136,22 @@
             return Math.floor((level - 1) / 2);
         }
 
+        function drawWrapped(text, x, y, maxW, lineH){
+            const parts = text.split(" ");
+            let line = "";
+            for (let p of parts){
+                const test = line + p + " ";
+                if (ctx.measureText(test).width > maxW && line != ""){
+                    ctx.fillText(line, x, y);
+                    line = p + " ";
+                    y += lineH;
+                } else {
+                    line = test;
+                }
+            }
+            ctx.fillText(line, x, y);
+        }
+
         function wordPool(){
             const min = lens[level - 1][0];
             const max = lens[level - 1][1];
@@ -219,7 +235,7 @@
             ctx.fillStyle = "black";
             ctx.font = "80px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("🍎", 400, 80);
+            ctx.fillText("🦊🍎", 400, 80);
 
             ctx.fillStyle = "black";
             ctx.font = "60px sans-serif";
@@ -229,7 +245,7 @@
             ctx.fillStyle = "black";
             ctx.font = "24px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("Grab the right apple with your magic wand!", 400, 190);
+            ctx.fillText("Help Pip the fox bring every letter home!", 400, 190);
 
             ctx.fillStyle = "pink";
             ctx.fillRect(150, 250, 220, 100);
@@ -356,9 +372,9 @@
 
             if(scanTimer >= 180){
                 wandColor = {r: avgR, g: avgG, b: avgB};
-                screen = "play";
-                console.log(wandColor);
-                say(questionText());
+                screen = "levelup";
+                levelTimer = 360;
+                say("Welcome to the " + lands[landNow()].name + "!");
             }
 
             ctx.fillStyle = "black";
@@ -388,7 +404,13 @@
             ctx.font = "40px sans-serif";
             ctx.textAlign = "center";
             if((level - 1) % 2 == 0){
+                ctx.font = "90px sans-serif";
+                ctx.fillText("🦊 " + lands[landNow()].friend, 400, 170);
+                ctx.font = "40px sans-serif";
                 ctx.fillText("Welcome to the " + lands[landNow()].name + "!", 400, 300);
+                ctx.font = "24px sans-serif";
+                drawWrapped(lands[landNow()].story, 400, 420, 600, 32);
+                ctx.font = "40px sans-serif";
             } else {
                 ctx.fillText("Level complete!", 400, 300);
             }
@@ -406,7 +428,6 @@
         function drawEnd(){
             ctx.fillStyle = "gold";
             ctx.fillRect(0, 0, 800, 600);
-
             ctx.fillStyle = "saddlebrown";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
@@ -528,10 +549,11 @@
                                 } else { 
                                     questions = nextSet();
                                     screen = "levelup";
-                                    levelTimer = 120;
                                     if ((level - 1) % 2 == 0){
+                                        levelTimer = 360;
                                         say("Welcome to the " + lands[landNow()].name + "!");
                                     } else {
+                                        levelTimer = 120;
                                         say("Level complete!");
                                     }
                                 }
@@ -588,6 +610,10 @@
 
             ctx.fillStyle = "limegreen";
             ctx.fillRect(0, 500, 800, 100);
+
+            ctx.font = "60px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("🦊", 60, 550);
 
             const barX = 250;
             const barY = 15;
