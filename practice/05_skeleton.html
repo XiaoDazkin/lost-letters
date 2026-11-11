@@ -19,7 +19,7 @@
         let mode = "words";
         let basketX = 400;
         let score = 0;
-        let apples = [{x: 0, y: -10, speed: 1 + Math.random() * 3, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -5, speed: 1 + Math.random() * 5, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -15, speed: 1 + Math.random() * 2, hover: false, hold: 0, word: "", rotten: false}];
+        let apples = [{x: 0, y: -10, speed: 0.8 + Math.random() * 0.7, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -5, speed: 0.9 + Math.random() * 0.7, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -15, speed: 1 + Math.random() * 0.7, hover: false, hold: 0, word: "", rotten: false}];
         let circleX = 400;
         let circleY = 300;
         let circleR = 80;
@@ -47,7 +47,7 @@
         let feedbackTimer = 0;
         let level = 1;
         let levelTimer = 0;
-        let speedUp = 0.5;
+        let speedUp = 0.2;
         let skies = ["skyblue", "lavender", "powderblue", "peachpuff", "lightyellow"];
         let questions = wordSets[level - 1];
         let maxLevel = 5;
@@ -464,7 +464,7 @@
                 } else {
                     let bonus = (level - 1) * speedUp;
                     if(hard){
-                        bonus += 1.5;
+                        bonus += 0.8;
                     }
                     a.y = a.y + a.speed + bonus;
 
