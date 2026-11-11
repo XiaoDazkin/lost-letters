@@ -53,6 +53,7 @@
         let maxLevel = 5;
         let mistakes = 0;
         let soundOn = true;
+        let hard = false;
 
         canvas.addEventListener("click", function (event) {
             const x = event.offsetX;
@@ -75,6 +76,8 @@
                     startCamera();
                 } else if (x > 300 && x < 300 + 200 && y > 400 && y < 400 + 60){
                     soundOn = !soundOn;
+                } else if(x > 300 && x < 300 + 200 && y > 480 && y < 480 + 60){
+                    hard = !hard;
                 }
             } else if ( screen == "end"){
                 if(x > 290 && x < 290 + 220 && y > 470 && y < 470 + 100){
@@ -193,6 +196,18 @@
                 ctx.fillText("🔊 Sound: On", 400, 430);
             } else {
                 ctx.fillText("🔇 Sound: Off", 400, 430);
+            }
+
+            ctx.fillStyle = "pink";
+            ctx.fillRect(300, 480, 200, 60);
+            ctx.fillStyle = "white";
+            ctx.font = "30px sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            if(hard){
+                ctx.fillText("🐇 Hard", 400, 510);
+            } else {
+                ctx.fillText("🐢 Easy", 400, 510);
             }
         }
 
@@ -422,7 +437,11 @@
                         heldApple = null;
                     }
                 } else {
-                    a.y = a.y + a.speed + (level - 1) * speedUp;
+                    let bonus = (level - 1) * speedUp;
+                    if(hard){
+                        bonus += 1.5;
+                    }
+                    a.y = a.y + a.speed + bonus;
 
                     const dx = a.x - wandX;
                     const dy = a.y - wandY;
