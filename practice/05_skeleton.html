@@ -123,6 +123,8 @@
         let questions = [];
         let maxLevel = 8;
         let mistakes = 0;
+        let mathOn = true;
+        let questionCount = 0;
         let soundOn = true;
         let hard = false;
 
@@ -436,37 +438,42 @@
                 const w = pool[Math.floor(Math.random() * pool.length)];
                 if(!picked.includes(w.word)){
                     picked.push(w.word);
-                    const q = {word: w.word, pic: w.pic, type: "picture"};
-                    // roll the dice for the puzzle type
-                    const types = levelTypes[level - 1];
-                    const kind = types[Math.floor(Math.random() * types.length)];
-                    if (kind == "listen"){
-                        q.type = "listen";
-                    } else if (kind == "missing"){
-                        const i = Math.floor(Math.random() * w.word.length);  
-                        q.type = "missing";
-                        q.full = w.word;
-                        q.word = w.word[i];
-                        q.shown = w.word.slice(0, i) + "_" + w.word.slice(i + 1);
-                    } else if (kind == "unscramble"){
-                        q.type = "unscramble";
-                        q.shown = scramble(w.word);
-                    } else if (kind == "rhyme"){
-                        const g = rhymes[Math.floor(Math.random() * rhymes.length)];
-                        const a = g[Math.floor(Math.random() * g.length)];
-                        let b = a;
-                        while (b == a){
-                            b = g[Math.floor(Math.random() * g.length)];
+                    questionCount += 1;
+                    if (questionCount % 4 == 0 && mathOn){
+                        set.push(makeMaths());
+                    } else {
+                        const q = {word: w.word, pic: w.pic, type: "picture"};
+                        // roll the dice for the puzzle type
+                        const types = levelTypes[level - 1];
+                        const kind = types[Math.floor(Math.random() * types.length)];
+                        if (kind == "listen"){
+                            q.type = "listen";
+                        } else if (kind == "missing"){
+                            const i = Math.floor(Math.random() * w.word.length);  
+                            q.type = "missing";
+                            q.full = w.word;
+                            q.word = w.word[i];
+                            q.shown = w.word.slice(0, i) + "_" + w.word.slice(i + 1);
+                        } else if (kind == "unscramble"){
+                            q.type = "unscramble";
+                            q.shown = scramble(w.word);
+                        } else if (kind == "rhyme"){
+                            const g = rhymes[Math.floor(Math.random() * rhymes.length)];
+                            const a = g[Math.floor(Math.random() * g.length)];
+                            let b = a;
+                            while (b == a){
+                                b = g[Math.floor(Math.random() * g.length)];
+                            }
+                            q.type = "rhyme";
+                            q.shown = a;
+                            q.pic = picOf(a);
+                            q.word = b;
+                            q.group = g;
+                        } else if (kind == "spell"){
+                            q.type = "spell";
                         }
-                        q.type = "rhyme";
-                        q.shown = a;
-                        q.pic = picOf(a);
-                        q.word = b;
-                        q.group = g;
-                    } else if (kind == "spell"){
-                        q.type = "spell";
+                        set.push(q);
                     }
-                    set.push(q);
                 }
             }
             return set;
@@ -474,9 +481,6 @@
 
         // 🎲 Next 3 questions: words or maths
         function nextSet(){
-            if (mode == "maths"){
-                return makeMathsSet();
-            }
             return makeWordSet();
         }
 
@@ -688,41 +692,37 @@
             return scored.slice(0, n);
         }
         
-        // ➕ 3 maths questions (count / add / subtract)
-        function makeMathsSet(){
-            const set = [];
-            for (let i = 0; i < 3; i += 1){
-                const types = levelMaths[level - 1];
-                const kind = types[Math.floor(Math.random() * types.length)];
-                if (kind == "count"){
-                    const n = 2 + Math.floor(Math.random() * 5);
-                    set.push({
-                        word: String(n), 
-                        pic: "🍎".repeat(n), 
-                        ask: "How many apples?", 
-                        type: "maths"
-                    });
-                } else if (kind == "add"){
-                    const a = 1 + Math.floor(Math.random() * 5);
-                    const b = 2 + Math.floor(Math.random() * 4);
-                    set.push({
-                        word: String(a + b),
-                        pic: a + " + " + b,
-                        ask: "What is " + a + " plus " + b + "?",
-                        type: "maths"
-                    });
-                } else {
-                    const a = 4 + Math.floor(Math.random() * 6); 
-                    const b = 1 + Math.floor(Math.random() * 3);
-                    set.push({
-                        word: String(a - b), 
-                        pic: a + " − " + b, 
-                        ask: "What is " + a + " take away " + b + "?", 
-                        type: "maths"
-                    });
-                }
+        // ➕ 1 maths question (count / add / subtract)
+        function makeMaths(){
+            const types = levelMaths[level - 1];
+            const kind = types[Math.floor(Math.random() * types.length)];
+            if (kind == "count"){
+                const n = 2 + Math.floor(Math.random() * 5);
+                return{
+                    word: String(n), 
+                    pic: "🍎".repeat(n), 
+                    ask: "How many apples?", 
+                    type: "maths"
+                };
+            } else if (kind == "add"){
+                const a = 1 + Math.floor(Math.random() * 5);
+                const b = 2 + Math.floor(Math.random() * 4);
+                return{
+                    word: String(a + b),
+                    pic: a + " + " + b,
+                    ask: "What is " + a + " plus " + b + "?",
+                    type: "maths"
+                };
+            } else {
+                const a = 4 + Math.floor(Math.random() * 6); 
+                const b = 1 + Math.floor(Math.random() * 3);
+                return{
+                    word: String(a - b), 
+                    pic: a + " − " + b, 
+                    ask: "What is " + a + " take away " + b + "?", 
+                    type: "maths"
+                };
             }
-            return set;
         }
 
         // ❌ Pick one wrong answer
