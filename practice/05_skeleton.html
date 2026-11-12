@@ -89,6 +89,9 @@
         // 🍎 How many apples each level
         let choices = [2, 3, 3, 3, 3, 4, 4, 4];
 
+        // 🔢 Biggest maths number each level
+        let levelMax = [5, 5, 10, 10, 10, 15, 15, 20];
+
         // 🧩 Which puzzles each level uses
         let levelTypes = [
             ["picture"],
@@ -705,9 +708,10 @@
         // ➕ 1 maths question (count / add / subtract)
         function makeMaths(){
             const types = levelMaths[level - 1];
+            const max = levelMax[level - 1];
             const kind = types[Math.floor(Math.random() * types.length)];
             if (kind == "count"){
-                const n = 2 + Math.floor(Math.random() * 5);
+                const n = 1 + Math.floor(Math.random() * max);
                 return{
                     word: String(n), 
                     pic: "🍎".repeat(n), 
@@ -715,8 +719,8 @@
                     type: "maths"
                 };
             } else if (kind == "add"){
-                const a = 1 + Math.floor(Math.random() * 5);
-                const b = 2 + Math.floor(Math.random() * 4);
+                const a = 0 + Math.floor(Math.random() * max);
+                const b = 1 + Math.floor(Math.random() * (max - a));
                 return{
                     word: String(a + b),
                     pic: a + " + " + b,
@@ -724,8 +728,8 @@
                     type: "maths"
                 };
             } else {
-                const a = 4 + Math.floor(Math.random() * 6); 
-                const b = 1 + Math.floor(Math.random() * 3);
+                const a = 2 + Math.floor(Math.random() * (max - 1)); 
+                const b = 1 + Math.floor(Math.random() * (a - 1));
                 return{
                     word: String(a - b), 
                     pic: a + " − " + b, 
@@ -754,11 +758,12 @@
 
             // wrong number
             if (questions[current].type == "maths"){
-                let w = right;
-                while(w == right){
-                    w = String(1 + Math.floor(Math.random() * 10));
+                const wrongNum = [1, -1, 2, -2, 3, 10];
+                let w = -1;
+                while(w < 0){
+                    w = Number(right) + wrongNum[Math.floor(Math.random() * wrongNum.length)];
                 }
-                return w;
+                return String(w);
             }
 
             // wrong word that doesn't rhyme
