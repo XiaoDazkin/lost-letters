@@ -94,6 +94,9 @@
             ["boat","goat"], ["sock","rock","clock"], ["king","ring"], ["house","mouse"], ["bear","chair"]
         ];
 
+        // 🚫 Never show these inside a made-up word
+        let notForKids = ["cock","cok","dick","nig","neg","pee","poo","gun","die","sex","ass","butt","fart","shit","fuck","rape","kill","dead","hate","fat"];
+
         // 📊 Progress, levels and settings
         let current = 0;
         let feedbackText = "";
@@ -197,6 +200,33 @@
                     return w.pic;
                 }
             }
+        }
+
+        // 🛡️ Is a made-up word safe for kids?
+        function isSafe(text, real){
+            for (let bad of notForKids){
+                if (text.includes(bad) && !real.includes(bad)){
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // ✏️ Make a believable wrong spelling
+        function misspell(word){
+            let s = word;
+            while (s == word || !isSafe(s, word)){
+                if (Math.random() < 0.5){
+                    // swap: letters i and i+1
+                    const i = Math.floor(Math.random() * (word.length - 1));
+                    s = word.slice(0, i) + word[i + 1] + word[i] + word.slice(i + 2);
+                } else {
+                    // double: letter i twice
+                    const i = Math.floor(Math.random() * word.length);
+                    s = word.slice(0, i) + word[i] + word.slice(i);
+                }
+            }
+            return s;
         }
 
         // 🔀 Mix up the letters of a word
@@ -360,6 +390,9 @@
         // 🗣️ What Pip says for this question
         function questionText(){
             const q = questions[current];
+            if (q.type == "spell"){
+                return "Which one spells " + q.word + "?";
+            }
             if (q.type == "listen"){
                 return "Listen! Find the word " + q.word;
             }
@@ -389,7 +422,7 @@
                     picked.push(w.word);
                     const q = {word: w.word, pic: w.pic, type: "picture"};
                     // roll the dice for the puzzle type
-                    const kind = Math.floor(Math.random() * 5);
+                    const kind = Math.floor(Math.random() * 6);
                     if (kind == 1){
                         q.type = "listen";
                     } else if (kind == 2){
@@ -413,6 +446,8 @@
                         q.pic = picOf(a);
                         q.word = b;
                         q.group = g;
+                    } else if (kind == 5){
+                        q.type = "spell";
                     }
                     set.push(q);
                 }
@@ -645,6 +680,10 @@
         // ❌ Pick one wrong answer
         function pickWrong(){
             const right = questions[current].word;
+
+            if(questions[current].type == "spell"){
+                return misspell(right);
+            }
             // wrong letter
             if (questions[current].type == "missing"){
                 const abc = "abcdefghijklmnopqrstuvwxyz";
@@ -825,7 +864,9 @@
                 ctx.fillText("Unscramble the letters!", 400, 160);
             } else if (q.type == "rhyme"){
                 ctx.fillText("What rhymes with it?", 400, 160);
-            } else {
+            } else if (q.type =="spell"){
+                ctx.fillText("Which one is spelled right?", 400, 160);
+            }else {
                 ctx.fillText("What word is this?", 400, 160);
             }
 
