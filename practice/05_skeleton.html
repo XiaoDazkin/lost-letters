@@ -248,7 +248,7 @@
         // 🔀 Mix up the letters of a word
         function scramble(word){
             let s = word;
-            while (s == word){
+            while (s == word || !isSafe(s, word)){
                 const letters = word.split("");
                 let out = "";
                 while (letters.length > 0){
@@ -510,13 +510,8 @@
                     sumG += data[i + 1];
                     sumB += data[i + 2];
                     count += 1;
-
-                    //data[i] = 0;
-                    //data[i + 1] = 255;
-                    //data[i + 2] = 0;
                 }
             }
-            //ctx.putImageData(box, circleX - circleR, circleY - circleR);
             if(video.videoWidth > 0){
                 scanTimer += 1;
             }
@@ -657,6 +652,41 @@
                 }
             }
         }
+
+        // 📏 How many letter changes to turn word a into word b (cat→hat = 1)
+        function editDistance(a, b){
+            const d = [];
+            for (let i = 0; i <= a.length; i += 1){
+                d.push([]);
+                for (let j = 0; j <= b.length; j += 1){
+                    if (i == 0){ d[i].push(j); }
+                    else if (j == 0){ d[i].push(i); }
+                    else {
+                        const same = a[i - 1] == b[j - 1] ? 0 : 1;
+                        d[i].push(Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + same));
+                    }
+                }
+            }
+            return d[a.length][b.length];
+        }
+
+        // 🔍 The n real words that look most like this word
+        function similarWords(word, n){
+            const scored = [];
+            for (let w of wordPool()){
+                if (w.word != word){
+                    let s = 0;
+                    if (w.word[0] == word[0]) s += 3;
+                    if (w.word[w.word.length - 1] == word[word.length - 1]) s += 1;
+                    if (w.word.length == word.length) s += 2;
+                    s -= editDistance(w.word, word) * 0.8;
+                    s += Math.random() * 1.5;
+                    scored.push({word: w.word, score: s});
+                }
+            }
+            scored.sort(function (a, b){ return b.score - a.score; });
+            return scored.slice(0, n);
+        }
         
         // ➕ 3 maths questions (count / add / subtract)
         function makeMathsSet(){
@@ -730,13 +760,11 @@
                 }
                 return w;
             }
-            let w = right;
             // wrong word
-            const pool = wordPool();
-            while(w == right){
-                w = pool[Math.floor(Math.random() * pool.length)].word;
-            }
-            return w;
+            const pool = similarWords(right, 4);
+            const w = pool[Math.floor(Math.random() * pool.length)];
+            return w.word;
+
         }
 
         // 🔄 Game logic every frame
@@ -779,7 +807,9 @@
                             } else {
                                 say(feedbackText + " " + questionText());
                             }
-                            dealWords();
+                            if (screen != "end"){
+                                dealWords();
+                            }
                             resetApple(a);
                         } else {
                             // ❌ wrong answer
