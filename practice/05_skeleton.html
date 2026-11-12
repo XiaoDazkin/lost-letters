@@ -111,7 +111,7 @@
         // 🎵 Rhyme groups (hand-checked)
         let rhymes = [
             ["cat","hat","bat","rat"], ["dog","log","frog"], ["fox","box"], ["bee","tree","key"],
-            ["car","jar","star"], ["bug","mug"], ["duck","truck"], ["cake","snake"], ["rain","train"],
+            ["car","jar","star","guitar"], ["bug","mug"], ["duck","truck"], ["cake","snake"], ["rain","train"],
             ["boat","goat"], ["sock","rock","clock"], ["king","ring"], ["house","mouse"], ["bear","chair"]
         ];
 
@@ -460,9 +460,21 @@
                         if (kind == "listen"){
                             q.type = "listen";
                         } else if (kind == "missing"){
-                            const i = Math.floor(Math.random() * w.word.length);  
+                            // 🔍 find every vowel spot in the word
+                            const spots = [];
+                            for (let j = 0; j < w.word.length; j += 1){
+                                if ("aeiou".includes(w.word[j])){
+                                    spots.push(j);
+                                }
+                            }
+                            // 🕳️ hole = a random vowel (middle letter if no vowel)
+                            let i = Math.floor(w.word.length / 2);
+                            if (spots.length > 0){
+                                i = spots[Math.floor(Math.random() * spots.length)];
+                            }
                             q.type = "missing";
                             q.full = w.word;
+                            q.hole = i;
                             q.word = w.word[i];
                             q.shown = w.word.slice(0, i) + "_" + w.word.slice(i + 1);
                         } else if (kind == "unscramble"){
@@ -650,13 +662,14 @@
             speechSynthesis.speak(line);
         }
 
-        // 🍎 Put the right answer + 2 wrong ones on the apples
+        // 🍎 Put the right answer + wrong ones on the apples
         function dealWords(){
             const right = questions[current].word;
             const lucky = Math.floor(Math.random() * apples.length);
             const used = [right];
 
             for(let i = 0; i < apples.length; i += 1){
+                apples[i].rotten = false;
                 if (i == lucky){
                     apples[i].word = right;
                 } else {
@@ -746,12 +759,18 @@
             if(questions[current].type == "spell"){
                 return misspell(right);
             }
-            // wrong letter
+            // wrong letter: vowel for vowel, never a real or rude word
             if (questions[current].type == "missing"){
-                const abc = "abcdefghijklmnopqrstuvwxyz";
+                const q = questions[current];
+                let letters = "bcdfghlmnprstw";
+                if ("aeiou".includes(right)){
+                    letters = "aeiou";
+                }
                 let w = right;
-                while(w == right){
-                    w = abc[Math.floor(Math.random() * abc.length)];
+                let guess = q.full;
+                while (w == right || picOf(guess) || !isSafe(guess, q.full)){
+                    w = letters[Math.floor(Math.random() * letters.length)];
+                    guess = q.full.slice(0, q.hole) + w + q.full.slice(q.hole + 1);
                 }
                 return w;
             }
@@ -768,7 +787,7 @@
 
             // wrong word that doesn't rhyme
             if (questions[current].type == "rhyme"){
-                const pool = wordPool();
+                const pool = similarWords(questions[current].shown, 12);
                 let w = right;
                 while (questions[current].group.includes(w)){
                     w = pool[Math.floor(Math.random() * pool.length)].word;
