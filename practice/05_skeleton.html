@@ -18,7 +18,6 @@
         // 🎮 Game state
         let title = "Lost Letters";
         let screen = "title";
-        let mode = "words";
         let basketX = 400;
         let score = 0;
         // 🍎 The 3 falling apples
@@ -87,6 +86,9 @@
         // 📏 Word lengths per level (min, max)
         let lens = [[3,3],[3,4],[3,4],[3,5],[3,5],[4,6],[3,5],[4,7]];
 
+        // 🍎 How many apples each level
+        let choices = [2, 3, 3, 3, 3, 4, 4, 4];
+
         // 🧩 Which puzzles each level uses
         let levelTypes = [
             ["picture"],
@@ -134,22 +136,16 @@
             const y = event.offsetY;
 
             if (screen == "title"){
-                // 📖 Words button
-                if (x > 150 && x < 150 + 220 && y > 250 && y < 250 + 100){
-                    mode = "words";
+                // ▶️ Play button
+                if (x > 250 && x < 250 + 300 && y > 230 && y < 230 + 90){
                     questions = nextSet();
                     dealWords();
                     screen = "scan";
                     scanTimer = 0;
                     startCamera();
-                // ➕ Math button
-                } else if (x > 430 && x < 430 + 220 && y > 250 && y < 250 + 100){
-                    mode = "maths";
-                    questions = nextSet();
-                    dealWords();
-                    screen = "scan";
-                    scanTimer = 0;
-                    startCamera();
+                // ➕ Math toggle
+                } else if (x > 300 && x < 300 + 200 && y > 340 && y < 340 + 50){
+                    mathOn = !mathOn;
                 // 🔊 Sound toggle
                 } else if (x > 300 && x < 300 + 200 && y > 400 && y < 400 + 60){
                     soundOn = !soundOn;
@@ -165,6 +161,7 @@
                     current = 0;
                     mistakes = 0;
                     feedbackTimer = 0;
+                    questionCount = 0;
                     heldApple = null;
                     for (let a of apples){
                         resetApple(a);
@@ -352,27 +349,30 @@
             ctx.textAlign = "center";
             ctx.fillText("Help Pip the fox bring every letter home!", 400, 190);
 
+            // ▶️ Play button
             ctx.fillStyle = "pink";
-            ctx.fillRect(150, 250, 220, 100);
+            ctx.fillRect(250, 230, 300, 90);
             ctx.strokeStyle = "hotpink";
             ctx.lineWidth = 4;
-            ctx.strokeRect(150, 250, 220, 100);
+            ctx.strokeRect(250, 230, 300, 90);
             ctx.fillStyle = "white";
-            ctx.font = "40px sans-serif";
+            ctx.font = "44px sans-serif";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.fillText("📖 Words", 260, 300);
+            ctx.fillText("▶️ Play", 400, 275);
 
+            // ➕ Maths toggle
             ctx.fillStyle = "pink";
-            ctx.fillRect(430, 250, 220, 100);
+            ctx.fillRect(300, 340, 200, 50);
             ctx.strokeStyle = "hotpink";
-            ctx.lineWidth = 4;
-            ctx.strokeRect(430, 250, 220, 100);
+            ctx.strokeRect(300, 340, 200, 50);
             ctx.fillStyle = "white";
-            ctx.font = "40px sans-serif";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillText("➕ Math", 540, 300);
+            ctx.font = "28px sans-serif";
+            if (mathOn){
+                ctx.fillText("➕ Maths: On", 400, 365);
+            } else {
+                ctx.fillText("➖ Maths: Off", 400, 365);
+            }
 
             ctx.fillStyle = "pink";
             ctx.fillRect(300, 400, 200, 60);
@@ -529,7 +529,7 @@
                 wandColor = {r: avgR, g: avgG, b: avgB};
                 screen = "levelup";
                 levelTimer = 360;
-                say("Welcome to the " + lands[landNow()].name + "!");
+                say("Welcome to the " + lands[landNow()].name + "! " + lands[landNow()].story);
             }
 
             ctx.fillStyle = "black";
@@ -574,7 +574,7 @@
             ctx.fillText("Level " + level, 400, 360);
             // count down, then back to play
             levelTimer -= 1;
-            if(levelTimer <= 0){
+            if(levelTimer <= 0 && !speechSynthesis.speaking){
                 screen = "play";
                 for (let a of apples){
                     resetApple(a);
@@ -798,7 +798,7 @@
                                     screen = "levelup";
                                     if ((level - 1) % 2 == 0){
                                         levelTimer = 360;
-                                        say("Welcome to the " + lands[landNow()].name + "!");
+                                        say("Welcome to the " + lands[landNow()].name + "! " + lands[landNow()].story);
                                     } else {
                                         levelTimer = 120;
                                         say("Level complete!");
