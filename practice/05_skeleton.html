@@ -1023,7 +1023,9 @@
                 if(wandLost == false){
                     update();
                 }
-                draw();
+                if (screen == "play"){
+                    draw();
+                }
             } else if(screen == "levelup"){
                 drawLevelUp();
             } else if(screen == "end"){
