@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Lost Letters</title>
+    <style>
+        /* 🖥️ Fill the window, keep the 4:3 shape */
+        body { margin: 0; background: black; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        canvas { width: min(100vw, calc(100vh * 4 / 3)); height: auto; }
+    </style>
 </head>
 <body>
     <canvas id="game" width="800" height="600"></canvas>
@@ -37,9 +42,11 @@
         let searchR = 150;
         let smooth = 0.3;
         // ✋ Grabbing
-        let grabR = 40;
         let grabTime = 30;
         let heldApple = null;
+        let grabR = 55;
+        //🍎 Apple size
+        let appleR = 45;
 
         // 🗺️ The 4 lands (Letter Village comes after)
         let lands = [
@@ -132,11 +139,12 @@
         let questionCount = 0;
         let soundOn = true;
         let hard = false;
+        let lostTimer = 0;
 
         // 🖱️ Clicks on title and end screen buttons
         canvas.addEventListener("click", function (event) {
-            const x = event.offsetX;
-            const y = event.offsetY;
+            const x = event.offsetX * 800 / canvas.clientWidth;
+            const y = event.offsetY * 600 / canvas.clientHeight;
 
             if (screen == "title"){
                 // ▶️ Play button
@@ -145,6 +153,7 @@
                     screen = "scan";
                     scanTimer = 0;
                     startCamera();
+                    say("Hold your magic wand inside the circle.");
                 // ➕ Math toggle
                 } else if (x > 300 && x < 300 + 200 && y > 340 && y < 340 + 50){
                     mathOn = !mathOn;
@@ -308,9 +317,6 @@
                 }
             }
 
-            // lost or found? smooth the movement
-            const wasLost = wandLost;
-
             if (count < miniPixels){
                 wandLost = true;
             } else {
@@ -323,9 +329,17 @@
                 wandY = wandY + (targetY - wandY) * smooth;
             }
 
-            // say it only once, when it gets lost
-            if(wandLost == true && wasLost == false){
-                say("Where's your wand?");
+            // 🗣️ lost 1.5 s → ask for the wand; back → read the question again
+            if (wandLost == true){
+                lostTimer += 1;
+                if (lostTimer == 90){
+                    say("Where's your wand?");
+                }
+            } else {
+                if (lostTimer >= 90){
+                    say(questionText());
+                }
+                lostTimer = 0;
             }
         }
 
@@ -555,21 +569,54 @@
                 say("Welcome to the " + lands[landNow()].name + "! " + lands[landNow()].story);
             }
 
-            ctx.fillStyle = "black";
-            ctx.font = "30px sans-serif";
+            // 📋 Instruction card at the top
+            ctx.fillStyle = "rgba(255, 248, 236, 0.96)";
+            ctx.beginPath();
+            ctx.roundRect(100, 70, 600, 120, 30);
+            ctx.fill();
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 6;
+            ctx.stroke();
+
             ctx.textAlign = "center";
-            ctx.fillText("Scan your wand!", 400, 200);
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "saddlebrown";
+            ctx.font = "19px sans-serif";
+            ctx.fillText("Use any bright toy, sock or paper as your magic wand", 400, 102);
 
-            const secondsLeft = Math.ceil((180 - scanTimer) / 60);
-            ctx.fillText(secondsLeft, 400, 450);
+            ctx.fillStyle = "tomato";
+            ctx.font = "bold 34px sans-serif";
+            if (scanTimer == 0){
+                ctx.fillText("Hold it in the circle 🪄", 400, 150);
+            } else {
+                ctx.fillText("Hold still… looking!", 400, 150);
+            }
 
-            ctx.strokeStyle = "gold";
-            ctx.lineWidth = 5;
+            // ⚪ Dashed white circle
+            ctx.save();
+            ctx.setLineDash([16, 12]);
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 7;
             ctx.beginPath();
             ctx.arc(circleX, circleY, circleR, 0, Math.PI * 2);
             ctx.stroke();
+            ctx.restore();
 
-            ctx.fillStyle = "rgb("+ avgR + "," + avgG + "," + avgB + ")";
+            // 🟢 Green ring fills up while scanning
+            if (scanTimer > 0){
+                const progress = scanTimer / 180;
+                ctx.save();
+                ctx.strokeStyle = "mediumseagreen";
+                ctx.lineWidth = 10;
+                ctx.lineCap = "round";
+                ctx.beginPath();
+                ctx.arc(circleX, circleY, circleR + 12, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // 🎨 Colour preview box
+            ctx.fillStyle = "rgb(" + avgR + "," + avgG + "," + avgB + ")";
             ctx.fillRect(20, 20, 60, 60);
         }
 
@@ -959,20 +1006,29 @@
                 } else{
                     ctx.fillStyle = "red";
                 }
+
                 ctx.beginPath();
-                ctx.arc(a.x, a.y, 25, 0, Math.PI * 2);
+                ctx.arc(a.x, a.y, appleR, 0, Math.PI * 2);
                 ctx.fill();
 
+                // stem and leaf on top
                 ctx.fillStyle = "saddlebrown";
-                ctx.fillRect(a.x - 2, a.y - 35, 4, 10);
-
+                ctx.fillRect(a.x - 3, a.y - appleR - 12, 6, 14);
                 ctx.fillStyle = "green";
                 ctx.beginPath();
-                ctx.arc(a.x + 6, a.y - 30, 6, 0, Math.PI * 2);
+                ctx.arc(a.x + 9, a.y - appleR - 6, 8, 0, Math.PI * 2);
                 ctx.fill();
 
+                // word: longer word = smaller font, so it always fits
+                let size = appleR * 2.6 / a.word.length;
+                if (a.word.length <= 2){
+                    size = appleR * 0.95;
+                } else if (a.word.length <= 4){
+                    size = appleR * 0.62;
+                }
+                size = Math.max(16, Math.min(size, appleR));
                 ctx.fillStyle = "white";
-                ctx.font = "20px sans-serif";
+                ctx.font = "bold " + size + "px sans-serif";
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
                 ctx.fillText(a.word, a.x, a.y);
@@ -1016,7 +1072,7 @@
             }
 
             // wand lost overlay, or the blue wand dot
-            if (wandLost == true){
+            if (lostTimer >= 90){
                 ctx.fillStyle = "rgb(0, 0, 0, 0.5)";
                 ctx.fillRect(0, 0, 800, 600);
                 ctx.fillStyle = "white";
@@ -1033,6 +1089,16 @@
 
         // 🔁 Main loop: run the right screen every frame
         function loop() {
+            // 🎨 Side bars match the screen colours
+            let side = "black";
+            if (screen == "title"){
+                side = "skyblue";
+            } else if (screen == "levelup" || screen == "end"){
+                side = "gold";
+            } else if (screen == "play"){
+                side = "linear-gradient(" + lands[landNow()].sky + " 83.3%, limegreen 83.3%)";
+            }
+            document.body.style.background = side;
             if (screen == "title"){
                 drawTitle();
             } else if (screen == "scan"){
