@@ -131,7 +131,7 @@
         let feedbackTimer = 0;
         let level = 1;
         let levelTimer = 0;
-        let speedUp = 0.2;
+        let speedUp = 0.1;
         let questions = [];
         let maxLevel = 8;
         let mistakes = 0;
@@ -276,7 +276,7 @@
             const appleAmount = choices[level - 1];
             apples = [];
             for (let i = 0; i < appleAmount; i += 1){
-                apples.push({x: 0, y: 0, speed: 0.8 + Math.random() * 0.7, hover: false, hold: 0, word: "", rotten: false, lane: 100 + (i + 0.5) * (600 / appleAmount)});
+                apples.push({x: 0, y: 0, speed: 0.4 + Math.random() * 0.35, hover: false, hold: 0, word: "", rotten: false, lane: 100 + (i + 0.5) * (600 / appleAmount)});
             }
         }
 
@@ -694,7 +694,7 @@
 
         // 🍎 Send an apple back to the top
         function resetApple(a){
-            a.y = Math.random() * -50;
+            a.y = 245 - Math.random() * 30;
             a.x = a.lane;
         }
 
@@ -906,7 +906,7 @@
                     // falling apple: speed up each level
                     let bonus = (level - 1) * speedUp;
                     if(hard){
-                        bonus += 0.8;
+                        bonus += 0.4;
                     }
                     a.y = a.y + a.speed + bonus;
 
@@ -1097,6 +1097,10 @@
                 side = "gold";
             } else if (screen == "play"){
                 side = "linear-gradient(" + lands[landNow()].sky + " 83.3%, limegreen 83.3%)";
+                // darken the bars too when the wand is lost
+                if (lostTimer >= 90){
+                    side = "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), " + side;
+                }
             }
             document.body.style.background = side;
             if (screen == "title"){
