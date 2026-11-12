@@ -87,6 +87,13 @@
         // 📏 Word lengths per level (min, max)
         let lens = [[3,3],[3,4],[3,4],[3,5],[3,5],[4,6],[3,5],[4,7]];
 
+        // 🎵 Rhyme groups (hand-checked)
+        let rhymes = [
+            ["cat","hat","bat","rat"], ["dog","log","frog"], ["fox","box"], ["bee","tree","key"],
+            ["car","jar","star"], ["bug","mug"], ["duck","truck"], ["cake","snake"], ["rain","train"],
+            ["boat","goat"], ["sock","rock","clock"], ["king","ring"], ["house","mouse"], ["bear","chair"]
+        ];
+
         // 📊 Progress, levels and settings
         let current = 0;
         let feedbackText = "";
@@ -181,6 +188,15 @@
                 }
             }
             return pool;
+        }
+
+        // 🖼️ Find the picture for a word
+        function picOf(word){
+            for (let w of words){
+                if (w.word == word){
+                    return w.pic;
+                }
+            }
         }
 
         // 🔀 Mix up the letters of a word
@@ -353,13 +369,16 @@
             if (q.type == "unscramble"){
                 return "Unscramble the letters!";
             }
+            if (q.type == "rhyme"){
+                 return "Which word rhymes with " + q.shown + "?"; 
+            }
             if(q.ask){
                 return q.ask;
             }
             return "Can you find the " + q.word + "?";
         }
 
-        // 📖 3 word questions (picture / listen / missing / unscramble)
+        // 📖 3 word questions (picture / listen / missing / unscramble/ rhyme)
         function makeWordSet(){
             const pool = wordPool();
             const set = [];
@@ -370,7 +389,7 @@
                     picked.push(w.word);
                     const q = {word: w.word, pic: w.pic, type: "picture"};
                     // roll the dice for the puzzle type
-                    const kind = Math.floor(Math.random() * 4);
+                    const kind = Math.floor(Math.random() * 5);
                     if (kind == 1){
                         q.type = "listen";
                     } else if (kind == 2){
@@ -382,6 +401,18 @@
                     } else if (kind == 3){
                         q.type = "unscramble";
                         q.shown = scramble(w.word);
+                    } else if (kind == 4){
+                        const g = rhymes[Math.floor(Math.random() * rhymes.length)];
+                        const a = g[Math.floor(Math.random() * g.length)];
+                        let b = a;
+                        while (b == a){
+                            b = g[Math.floor(Math.random() * g.length)];
+                        }
+                        q.type = "rhyme";
+                        q.shown = a;
+                        q.pic = picOf(a);
+                        q.word = b;
+                        q.group = g;
                     }
                     set.push(q);
                 }
@@ -632,6 +663,16 @@
                 }
                 return w;
             }
+
+            // wrong word that doesn't rhyme
+            if (questions[current].type == "rhyme"){
+                const pool = wordPool();
+                let w = right;
+                while (questions[current].group.includes(w)){
+                    w = pool[Math.floor(Math.random() * pool.length)].word;
+                }
+                return w;
+            }
             let w = right;
             // wrong word
             const pool = wordPool();
@@ -763,7 +804,7 @@
             ctx.textAlign = "center";
             if (q.type == "listen"){
                 ctx.fillText("👂", 400, 100);
-            } else if (q.type == "missing" || q.type == "unscramble"){
+            } else if (q.type == "missing" || q.type == "unscramble" || q.type == "rhyme"){
                 ctx.fillText(q.pic, 300, 100);
                 ctx.font = "60px sans-serif";
                 ctx.fillText(q.shown, 480, 100);
@@ -782,6 +823,8 @@
                 ctx.fillText("Find the missing letter!", 400, 160);
             }  else if (q.type == "unscramble"){
                 ctx.fillText("Unscramble the letters!", 400, 160);
+            } else if (q.type == "rhyme"){
+                ctx.fillText("What rhymes with it?", 400, 160);
             } else {
                 ctx.fillText("What word is this?", 400, 160);
             }
