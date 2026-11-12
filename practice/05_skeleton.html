@@ -20,8 +20,8 @@
         let screen = "title";
         let basketX = 400;
         let score = 0;
-        // 🍎 The 3 falling apples
-        let apples = [{x: 0, y: -10, speed: 0.8 + Math.random() * 0.7, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -5, speed: 0.9 + Math.random() * 0.7, hover: false, hold: 0, word: "", rotten: false}, {x: 0, y: -15, speed: 1 + Math.random() * 0.7, hover: false, hold: 0, word: "", rotten: false}];
+        // 🍎 The falling apples (made each level)
+        let apples = [];
         // 📷 Wand scan circle
         let circleX = 400;
         let circleY = 300;
@@ -139,7 +139,6 @@
                 // ▶️ Play button
                 if (x > 250 && x < 250 + 300 && y > 230 && y < 230 + 90){
                     questions = nextSet();
-                    dealWords();
                     screen = "scan";
                     scanTimer = 0;
                     startCamera();
@@ -258,6 +257,15 @@
                 s = out;
             }
             return s;
+        }
+
+        // 🍎 Make this level's apples (2, 3 or 4)
+        function makeApples(){
+            const appleAmount = choices[level - 1];
+            apples = [];
+            for (let i = 0; i < appleAmount; i += 1){
+                apples.push({x: 0, y: 0, speed: 0.8 + Math.random() * 0.7, hover: false, hold: 0, word: "", rotten: false, lane: 100 + (i + 0.5) * (600 / appleAmount)});
+            }
         }
 
         // 🪄 Find the wand colour in the camera picture
@@ -576,6 +584,8 @@
             levelTimer -= 1;
             if(levelTimer <= 0 && !speechSynthesis.speaking){
                 screen = "play";
+                makeApples();
+                dealWords();
                 for (let a of apples){
                     resetApple(a);
                 }
@@ -623,7 +633,7 @@
         // 🍎 Send an apple back to the top
         function resetApple(a){
             a.y = Math.random() * -50;
-            a.x = 100 + Math.random() * 600;
+            a.x = a.lane;
         }
 
         // 🔊 Pip talks
@@ -1015,10 +1025,6 @@
                 drawEnd();
             }
             requestAnimationFrame(loop);
-        }
-        // ▶️ Start
-        for (let a of apples){
-            resetApple(a);
         }
         loop();   
     </script>
