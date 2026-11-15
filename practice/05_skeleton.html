@@ -19,6 +19,14 @@
         const canvas = document.getElementById("game");
         const ctx = canvas.getContext("2d");
         const video = document.getElementById("cam");
+
+        // 🔍 Small hidden picture the wand tracker read (never show on screen)
+        const trackW = 320;
+        const trackH = 180;
+        const trackCanvas = document.createElement("canvas");
+        trackCanvas.width = trackW;
+        trackCanvas.height = trackH;
+        const trackCtx = trackCanvas.getContext("2d", {willReadFrequently: true});
         
         // 🎮 Game state
         let title = "Lost Letters";
@@ -37,7 +45,7 @@
         let tolerance = 60;
         let wandX = 400;
         let wandY = 300;
-        let miniPixels = 50;
+        let miniPixels = 6;
         let wandLost = false;
         let searchR = 150;
         let smooth = 0.3;
@@ -282,14 +290,14 @@
 
         // 🪄 Find the wand colour in the camera picture
         function findWand(){
-            ctx.save();
-            ctx.translate(800, 0);
-            ctx.scale(-1, 1);
-            ctx.drawImage(video, 0, 0, 800, 600);
-            ctx.restore();
+            trackCtx.save();
+            trackCtx.translate(trackW, 0);
+            trackCtx.scale(-1, 1);
+            trackCtx.drawImage(video, 0, 0, trackW, trackH);
+            trackCtx.restore();
 
             // check every pixel near the wand
-            const frame = ctx.getImageData(0, 0, 800, 600);
+            const frame = trackCtx.getImageData(0, 0, trackW, trackH);
             const data = frame.data;
             let count = 0;
             let sumX = 0;
@@ -303,8 +311,8 @@
                 const diff = Math.abs(r - wandColor.r) + Math.abs(g - wandColor.g) + Math.abs(b - wandColor.b);
                 
                 const pixel = i / 4;
-                const x = pixel % 800;
-                const y = Math.floor(pixel / 800);
+                const x = (pixel % trackW) * 800 / trackW;
+                const y = Math.floor(pixel / trackW) * 600 / trackH;
 
                 const dx = x - wandX;
                 const dy = y - wandY;
