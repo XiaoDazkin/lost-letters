@@ -716,6 +716,9 @@
             const used = [right];
 
             for(let i = 0; i < apples.length; i += 1){
+                if(apples[i].rotten == true){
+                    resetApple(apples[i]);
+                }
                 apples[i].rotten = false;
                 if (i == lucky){
                     apples[i].word = right;
@@ -908,6 +911,9 @@
                     if(hard){
                         bonus += 0.4;
                     }
+                    if(a.rotten){
+                        a.y += 6;
+                    }
                     a.y = a.y + a.speed + bonus;
 
                     // hover and grab
@@ -928,11 +934,9 @@
                         say(a.word);
                     }
 
-
                     // hit the grass → back to the top
-                    if (a.y > 500){
+                    if (a.y > 500 && !a.rotten){
                         resetApple(a);
-                        a.rotten = false;
                     }
                 }
             }
