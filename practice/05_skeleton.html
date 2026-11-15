@@ -288,6 +288,41 @@
             }
         }
 
+        // 🎨 Color boxes: 24 hues * 8 strengths = 192
+        const hueBins = 24;
+        const satBins = 8;
+
+        // 🎨 Which color box is the pixel in? (-1 = too dark or too pale)
+        function binOf(r, g, b){
+            r = r/ 255;
+            g = g/ 255;
+            b = b/ 255;
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            const d = max - min;
+            // Strength: 0 = grey, 1 = pure color
+            let sat = 0;
+            if (max > 0){
+                sat = d/ max;
+            }
+            if (max < 0.16 || sat < 0.25){
+                return -1;
+            }
+            // hue: where on the color wheel (0-1)
+            let h = 0;
+            if (max == r){
+                h = ((g - b) / d) % 6;
+            } else if (max == g){
+                h = (b - r) / d + 2;
+            } else {
+                h = (r - g) / d + 4;
+            }
+            h = (h / 6 + 1) % 1;
+            const hueBox = Math.min(hueBins - 1, Math.floor(h * hueBins));
+            const satBox = Math.min(satBins - 1, Math.floor(sat * satBins));
+            return hueBox * satBins + satBox;
+        }
+
         // 🪄 Find the wand colour in the camera picture
         function findWand(){
             trackCtx.save();
