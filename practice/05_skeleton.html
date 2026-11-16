@@ -54,6 +54,8 @@
         let outCount = new Array(192).fill(0);
         let inTotal = 0;
         let outTotal = 0;
+        // 🪄 Which colour boxes count as "wand" (true / false for each of the 192)
+        let model = new Array(192).fill(false);
         // ✋ Grabbing
         let grabTime = 30;
         let heldApple = null;
@@ -330,6 +332,64 @@
             const hueBox = Math.min(hueBins - 1, Math.floor(h * hueBins));
             const satBox = Math.min(satBins - 1, Math.floor(sat * satBins));
             return hueBox * satBins + satBox;
+        }
+
+        // 🎨 Split a box number back into its hue and its strength
+        function hueOf(bin){ return Math.floor(bin / satBins); }
+        function satOf(bin){ return bin % satBins; }
+        
+        // 🎨 How many hue steps apart are two boxes? (the wheel wraps round: 23 is next to 0)
+        function hueDist(a, b){
+            const d = Math.abs(hueOf(a) - hueOf(b));
+            return Math.min(d, hueBins - d);
+        }
+
+        // 🎨 Find the wand's main colour: common in the circle, rare outside
+        function findBestBin(){
+            let best = -1;
+            let bestScore = 0;
+            for (let bin = 0; bin <= 191; bin++){
+                const pIn = inCount[bin] / inTotal;
+                const pOut = outCount[bin]/ outTotal;
+                if (satOf(bin) >= 3 && pIn >= 0.012){
+                    const score = pIn / (pOut + 0.0005);
+                    if (score > bestScore){
+                        best = bin;
+                        bestScore = score;
+                    }
+                }
+            }
+            // loop finished: every box was checked
+            return best;
+        }
+
+        // 🪄 Build the list of wand colours from the scan. true = found a wand, false = no wand
+        function buildModel(){
+            model.fill(false);
+            const best = findBestBin();
+            if (best == -1){
+                return false;
+            }
+
+            let inShare = 0;
+            let outShare = 0;
+            for (let bin = 0; bin <= 191; bin++){
+                const pIn = inCount[bin] / inTotal;
+                const pOut = outCount[bin] / outTotal;
+
+                // close hue, and mostly seen inside the circle
+                const mostlyInside = hueDist(bin, best) <= 2 && pIn > pOut * 3 && pIn > 0.001;
+                // very close hue and strength, and almost never seen outside
+                const neverOutside = hueDist(bin, best) <= 1 && pOut < 0.0015 && Math.abs(satOf(bin) - satOf(best)) <= 3;
+
+                if (satOf(bin) >= 2 && (mostlyInside || neverOutside)){
+                    model[bin] = true;
+                    inShare += pIn;
+                    outShare += pOut;
+                }
+            }
+            // a real wand: fills some of the circle, and is (almost) nowhere else
+            return inShare >= 0.015 && outShare <= 0.012;
         }
 
         // 🪄 Find the wand colour in the camera picture
@@ -654,6 +714,7 @@
             // 3 seconds done → save colour, start the story
             if(scanTimer >= 180){
                 wandColor = {r: avgR, g: avgG, b: avgB};
+                alert("Wand found: " + buildModel());   // 🧪 TEMP test, delete later
                 screen = "levelup";
                 levelTimer = 360;
                 say("Welcome to the " + lands[landNow()].name + "! " + lands[landNow()].story);
